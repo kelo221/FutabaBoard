@@ -2,6 +2,10 @@
     import {Card, Navbar, NavHamburger, NavLi, NavUl} from "flowbite-svelte";
 </script>
 
+<style>
+    @import '../country-flags/flags.css';
+</style>
+
 
 <Navbar let:hidden let:toggle color="gray">
     <NavUl {hidden}>
@@ -9,6 +13,7 @@
     </NavUl>
 </Navbar>
 
+<i class="flag ge"></i>
 
 <Card href="/cards">
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
