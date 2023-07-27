@@ -1,0 +1,25 @@
+{
+    "posts": [{
+        "time": 1687535166,
+        "postNum": 1,
+        "name": "Anonymous",
+        "postText": "I HECKING LOVE DIXIE",
+        "postImage": {
+            "filename": "cow.jpg",
+            "imageInfo": "1664934427285917.jpg (69 KB, 1125x1014)"
+        },
+        "flags": ["usa", "georgia"]
+    },
+        {
+            "time": 1687535170,
+            "postNum": 2,
+            "name": "Anonymous",
+            "postText": "I HECKING LOVE DIXIE2",
+            "postImage": {
+                "filename": "cow.jpg",
+                "imageInfo": "1664934427285917.jpg (69 KB, 1125x1014)"
+            },
+            "flags": ["usa", "georgia"]
+        }
+    ]
+}
