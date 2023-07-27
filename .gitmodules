@@ -1,0 +1,3 @@
+[submodule "Frontend/static/flags"]
+	path = Frontend/static/flags
+	url = https://github.com/flaghunters/Extra-Flags-for-4chan.git
