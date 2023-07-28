@@ -1,0 +1,46 @@
+Alexandrovsky District
+Amvrosievsky District
+Avdeyevka
+Bakhmut
+Bakhmutsky District
+Debaltsevo
+Dobropolsky District
+Dobropolye
+Dokuchayevsk
+Donetsk
+Druzhkovka
+Gorlovka
+Khartsyzsk
+Kirovskoye
+Konstantinovka
+Konstantinovsky District
+Kramatorsk
+Liman
+Limansky District
+Makeyevka
+Mangushsky District
+Marinsky District
+Mariupol
+Mirnograd
+Nikolsky District
+Novoazovsky District
+Novogrodovka
+Pokrovsk
+Pokrovsky District
+Selidovo
+Shakhtyorsk
+Shakhtyorsky District
+Slavyansk
+Slavyansky District
+Snezhnoye
+Starobeshevsky District
+Telmanovsky District
+Toretsk
+Torez
+Ugledar
+Velikonovosyolkovsky District
+Volnovakhsky District
+Yasinovataya
+Yasinovatsky District
+Yenakievo
+Zhdanovka

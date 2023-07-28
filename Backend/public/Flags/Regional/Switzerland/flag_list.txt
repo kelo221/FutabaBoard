@@ -1,0 +1,26 @@
+Canton of Aargau
+Canton of Appenzell Ausserrhoden
+Canton of Appenzell Innerrhoden
+Canton of Basel-Landschaft
+Canton of Basel-Stadt
+Canton of Bern
+Canton of Fribourg
+Canton of Genève
+Canton of Glarus
+Canton of Graubünden
+Canton of Jura
+Canton of Luzern
+Canton of Neuchâtel
+Canton of Nidwalden
+Canton of Obwalden
+Canton of Schaffhausen
+Canton of Schwyz
+Canton of Solothurn
+Canton of St. Gallen
+Canton of Thurgau
+Canton of Ticino
+Canton of Uri
+Canton of Valais
+Canton of Vaud
+Canton of Zug
+Canton of Zürich

@@ -1,0 +1,15 @@
+Harjumaa
+Hiiumaa
+Ida-Virumaa
+Järvamaa
+Jõgevamaa
+Läänemaa
+Lääne-Virumaa
+Pärnumaa
+Põlvamaa
+Raplamaa
+Saaremaa
+Tartumaa
+Valgamaa
+Viljandimaa
+Võrumaa

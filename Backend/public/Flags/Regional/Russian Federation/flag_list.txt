@@ -1,0 +1,89 @@
+Adygea
+Altai Republic
+Altai Territory
+Amur Region
+Arkhangelsk Region
+Astrakhan Region
+Bashkortostan
+Belgorod Region
+Bryansk Region
+Buryatia
+Chechnya
+Chelyabinsk Region
+Chukotka Autonomous District
+Chuvashia
+Crimea
+Dagestan
+Donetsk People's Republic
+Ingushetia
+Irkutsk Region
+Ivanovo Region
+Jewish Autonomous Region
+Kabardino-Balkaria
+Kaliningrad Region
+Kalmykia
+Kaluga Region
+Kamchatka Territory
+Karachay-Cherkessia
+Karelia
+Kemerovo Region
+Khabarovsk Territory
+Khakassia
+Khanty-Mansi Autonomous District
+Kherson Region
+Kirov Region
+Komi Republic
+Kostroma Region
+Krasnodar Territory
+Krasnoyarsk Territory
+Kurgan Region
+Kursk Region
+Leningrad Region
+Lipetsk Region
+Lugansk People's Republic
+Magadan Region
+Mari El
+Mordovia
+Moscow
+Moscow Region
+Murmansk Region
+Nenets Autonomous District
+Nizhny Novgorod Region
+North Ossetia-Alania
+Novgorod Region
+Novosibirsk Region
+Omsk Region
+Orenburg Region
+Oryol Region
+Penza Region
+Perm Territory
+Primorsky Territory
+Pskov Region
+Rostov Region
+Ryazan Region
+Saint Petersburg
+Sakha
+Sakhalin Region
+Samara Region
+Saratov Region
+Sevastopol
+Smolensk Region
+Stavropol Territory
+Sverdlovsk Region
+Tambov Region
+Tatarstan
+Tomsk Region
+Tula Region
+Tuva
+Tver Region
+Tyumen Region
+Udmurtia
+Ulyanovsk Region
+Vladimir Region
+Volgograd Region
+Vologda Region
+Voronezh Region
+Yamalo-Nenets Autonomous District
+Yaroslavl Region
+Zabaykalsky Territory
+Zaporozhye Region

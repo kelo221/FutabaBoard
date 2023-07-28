@@ -1,0 +1,27 @@
+Cherkasy Region
+Chernihiv Region
+Chernivtsi Region
+City of Sevastopol
+Dnipropetrovsk Region
+Donetsk Region
+Ivano-Frankivsk Region
+Kharkiv Region
+Kherson Region
+Khmelnytskyi Region
+Kirovohrad Region
+Kyiv
+Kyiv Region
+Luhansk Region
+Lviv Region
+Mykolaiv Region
+Odessa Region
+Poltava Region
+Republic of Crimea
+Rivne Region
+Sumy Region
+Ternopil Region
+Vinnytsia Region
+Volyn Region
+Zakarpattia Region
+Zaporizhia Region
+Zhytomyr Region

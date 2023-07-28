@@ -1,0 +1,34 @@
+Aberdeenshire
+Angus
+Argyll
+Ayrshire
+Banffshire
+Berwickshire
+Bute
+Caithness
+Clackmannanshire
+Dumfriesshire
+Dunbartonshire
+East Lothian
+Fife
+Inverness-shire
+Kincardineshire
+Kinross-shire
+Kirkcudbrightshire
+Lanarkshire
+Midlothian
+Moray
+Nairnshire
+Orkney
+Outer Hebrides
+Peeblesshire
+Perthshire
+Renfrewshire
+Ross and Cromarty
+Roxburghshire
+Selkirkshire
+Shetland
+Stirlingshire
+Sutherland
+West Lothian
+Wigtownshire
