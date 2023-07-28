@@ -18,6 +18,12 @@ type UserInfo struct {
 	Hash      string `json:"Hash"`
 }
 
+type ImagePrivilege struct {
+	IpAddress    string    `json:"-"`
+	HashedKey    string    `json:"HashedKey"`
+	StartingTime time.Time `json:"StartingTime"`
+}
+
 type Thread struct {
 	SharedID
 	UnixTime  time.Time `json:"UnixTime" gorm:"autoCreateTime"`
@@ -31,6 +37,22 @@ type Thread struct {
 	PostCount int       `json:"PostCount"`
 	PostImage PostImage `json:"PostImage,omitempty" gorm:"embedded"`
 	UserInfo
+}
+
+type ThreadPreview struct {
+	SharedID
+	UnixTime  time.Time `json:"UnixTime" gorm:"autoCreateTime"`
+	LastBump  time.Time `json:"LastBump" gorm:"autoCreateTime"`
+	Name      string    `json:"Name"`
+	Text      string    `json:"Text"`
+	Topic     string    `json:"Topic"`
+	Flags     string    `json:"Flags"`
+	Sticky    bool      `json:"Sticky"`
+	Page      int       `json:"Page"`
+	PostCount int       `json:"PostCount"`
+	PostImage PostImage `json:"PostImage,omitempty" gorm:"embedded"`
+	UserInfo
+	Posts []Post
 }
 
 type Post struct {
@@ -52,6 +74,7 @@ type PostImage struct {
 type Bans struct {
 	IP               string    `json:"IP"`
 	ExpiringTimeUnix time.Time `json:"ExpiringTimeUnix" gorm:"autoCreateTime"`
+	Reason           string    `json:"Reason"`
 }
 
 func (t *Thread) BeforeCreate(tx *gorm.DB) error {

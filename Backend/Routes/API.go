@@ -9,7 +9,7 @@ func Setup(app *fiber.App) {
 	api := app.Group("api")
 
 	admin := api.Group("admin")
-	admin.Delete("remove", Controllers.DeletePost)
+	admin.Delete("remove/*", Controllers.DeletePost)
 	admin.Post("ban", Controllers.Ban)
 
 	api.Post("register", Controllers.Register)
@@ -18,6 +18,7 @@ func Setup(app *fiber.App) {
 	api.Post("post", Controllers.Post)
 
 	api.Get("thread/*", Controllers.FetchThread)
+	api.Get("page/*", Controllers.FetchThreadPreviews)
 	api.Get("post/*", Controllers.FetchPost)
 	api.Get("test", Controllers.TestFunction)
 
