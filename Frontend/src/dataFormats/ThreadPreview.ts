@@ -3,19 +3,20 @@ export interface Root {
 }
 
 export interface ThreadPreview {
-    ID: number;
-    UnixTime: string;
-    LastBump: string;
-    Name: string;
-    Text: string;
-    Topic: string;
-    Flags: string;
-    Sticky: boolean;
-    Page: number;
-    PostCount: number;
-    PostImage: PostImage;
-    Hash: string;
-    Posts: Post[];
+    ID: number
+    UnixTime: string
+    LastBump: string
+    Name: string
+    Text: string
+    Topic: string
+    Country: string
+    ExtraFlags: string
+    Sticky: boolean
+    Page: number
+    PostCount: number
+    PostImage: PostImage
+    Hash: string
+    Posts: Post[]
 }
 
 export interface PostImage {
@@ -24,14 +25,15 @@ export interface PostImage {
 }
 
 export interface Post {
-    ID: number;
-    UnixTime: string;
-    Name: string;
-    Text: string;
-    Flags: string;
-    ParentThread: number;
-    PostImage: PostImage2;
-    Hash: string;
+    ID: number
+    UnixTime: string
+    Name: string
+    Text: string
+    Country: string
+    ExtraFlags: string
+    ParentThread: number
+    PostImage: PostImage2
+    Hash: string
 }
 
 export interface PostImage2 {

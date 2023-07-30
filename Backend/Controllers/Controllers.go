@@ -123,7 +123,7 @@ func Thread(c *fiber.Ctx) error {
 		})
 	}
 
-	if newThread.Flags == "" {
+	if newThread.Country == "" {
 		c.Status(400)
 		return c.Status(400).JSON(fiber.Map{
 			"message": "Missing flags.",
@@ -158,7 +158,7 @@ func Post(c *fiber.Ctx) error {
 		})
 	}
 
-	if newPost.Flags == "" {
+	if newPost.Country == "" {
 		c.Status(400)
 		return c.Status(400).JSON(fiber.Map{
 			"message": "Missing flags.",
@@ -204,22 +204,23 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 
 			for _, thread := range collection {
 				var posts []DataModels.Post
-				db.GetDB().Where("parent_thread = ?", thread.ID).Order("id desc").Limit(3).Find(&posts)
+				db.GetDB().Where("parent_thread = ?", thread.ID).Order("id asc").Limit(2).Find(&posts)
 
 				colWithPosts = append(colWithPosts, DataModels.ThreadPreview{
-					SharedID:  thread.SharedID,
-					UnixTime:  thread.UnixTime,
-					LastBump:  thread.LastBump,
-					Name:      thread.Name,
-					Text:      thread.Text,
-					Topic:     thread.Topic,
-					Flags:     thread.Flags,
-					Sticky:    thread.Sticky,
-					Page:      thread.Page,
-					PostCount: thread.PostCount,
-					PostImage: thread.PostImage,
-					UserInfo:  thread.UserInfo,
-					Posts:     posts,
+					SharedID:   thread.SharedID,
+					UnixTime:   thread.UnixTime,
+					LastBump:   thread.LastBump,
+					Name:       thread.Name,
+					Text:       thread.Text,
+					Topic:      thread.Topic,
+					Country:    thread.Country,
+					ExtraFlags: thread.ExtraFlags,
+					Sticky:     thread.Sticky,
+					Page:       thread.Page,
+					PostCount:  thread.PostCount,
+					PostImage:  thread.PostImage,
+					UserInfo:   thread.UserInfo,
+					Posts:      posts,
 				})
 			}
 
@@ -287,7 +288,7 @@ func isUserBanned(ipAddress string) (bool, time.Time) {
 func generateMD5HashWithSalt(input, salt string) string {
 	md5Hash := md5.New()
 	md5Hash.Write([]byte(input + salt))
-	return hex.EncodeToString(md5Hash.Sum(nil))[:5]
+	return hex.EncodeToString(md5Hash.Sum(nil))[:6]
 }
 
 func generateRandomString(length int) string {

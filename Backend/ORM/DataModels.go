@@ -26,31 +26,33 @@ type ImagePrivilege struct {
 
 type Thread struct {
 	SharedID
-	UnixTime  time.Time `json:"UnixTime" gorm:"autoCreateTime"`
-	LastBump  time.Time `json:"LastBump" gorm:"autoCreateTime"`
-	Name      string    `json:"Name"`
-	Text      string    `json:"Text"`
-	Topic     string    `json:"Topic"`
-	Flags     string    `json:"Flags"`
-	Sticky    bool      `json:"Sticky"`
-	Page      int       `json:"Page"`
-	PostCount int       `json:"PostCount"`
-	PostImage PostImage `json:"PostImage,omitempty" gorm:"embedded"`
+	UnixTime   time.Time `json:"UnixTime" gorm:"autoCreateTime"`
+	LastBump   time.Time `json:"LastBump" gorm:"autoCreateTime"`
+	Name       string    `json:"Name"`
+	Text       string    `json:"Text"`
+	Topic      string    `json:"Topic"`
+	Country    string    `json:"Country"`
+	ExtraFlags string    `json:"ExtraFlags"`
+	Sticky     bool      `json:"Sticky"`
+	Page       int       `json:"Page"`
+	PostCount  int       `json:"PostCount"`
+	PostImage  PostImage `json:"PostImage,omitempty" gorm:"embedded"`
 	UserInfo
 }
 
 type ThreadPreview struct {
 	SharedID
-	UnixTime  time.Time `json:"UnixTime" gorm:"autoCreateTime"`
-	LastBump  time.Time `json:"LastBump" gorm:"autoCreateTime"`
-	Name      string    `json:"Name"`
-	Text      string    `json:"Text"`
-	Topic     string    `json:"Topic"`
-	Flags     string    `json:"Flags"`
-	Sticky    bool      `json:"Sticky"`
-	Page      int       `json:"Page"`
-	PostCount int       `json:"PostCount"`
-	PostImage PostImage `json:"PostImage,omitempty" gorm:"embedded"`
+	UnixTime   time.Time `json:"UnixTime" gorm:"autoCreateTime"`
+	LastBump   time.Time `json:"LastBump" gorm:"autoCreateTime"`
+	Name       string    `json:"Name"`
+	Text       string    `json:"Text"`
+	Topic      string    `json:"Topic"`
+	Country    string    `json:"Country"`
+	ExtraFlags string    `json:"ExtraFlags"`
+	Sticky     bool      `json:"Sticky"`
+	Page       int       `json:"Page"`
+	PostCount  int       `json:"PostCount"`
+	PostImage  PostImage `json:"PostImage,omitempty" gorm:"embedded"`
 	UserInfo
 	Posts []Post
 }
@@ -60,7 +62,8 @@ type Post struct {
 	UnixTime     time.Time `json:"UnixTime" gorm:"autoCreateTime"`
 	Name         string    `json:"Name"`
 	Text         string    `json:"Text"`
-	Flags        string    `json:"Flags"`
+	Country      string    `json:"Country"`
+	ExtraFlags   string    `json:"ExtraFlags"`
 	ParentThread int64     `json:"ParentThread"`
 	PostImage    PostImage `json:"PostImage,omitempty" gorm:"embedded"`
 	UserInfo
