@@ -37,7 +37,7 @@
         width: 100%;
         margin: 1rem 0; /* Add any additional margin if needed */
         border: none;
-        border-top: 1px solid #ddd; /* Replace #ddd with your desired hr color */
+        border-top: 3px solid #ddd; /* Replace #ddd with your desired hr color */
     }
 
 </style>
@@ -46,7 +46,7 @@
     <div class="container h-full mx-auto mt-4 flex justify-center items-center">
         <div class="space-y-5 text-center flex flex-col items-center">
 
-            {#each threadPreviews as thread}
+            {#each threadPreviews as thread, index}
                 <div class="w-full text-token grid grid-cols-1 md:grid-cols-1">
                     <div class="card">
                         <div class="p-4 space-y-4">
@@ -54,19 +54,14 @@
                             <article class="flex items-center">
                                 <img src={"http://localhost:8000/ThreadContent/Sample/cow_s.jpg"}>
                                 <p style="text-align: left; padding-left: 10px">
-                                    <!-- cspell:disable -->
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam aspernatur
-                                    provident eveniet eligendi cumque consequatur tempore
-                                    sint nisi sapiente. Iste beatae laboriosam iure molestias cum expedita architecto
-                                    itaque quae rem.
-                                    <!-- cspell:enable -->
+                                    {thread.Text}
                                 </p>
                             </article>
                         </div>
                         <hr class="opacity-50"/>
                         <footer class="p-4 flex justify-start items-center space-x-4">
                             <div class="flex-auto flex justify-between items-center">
-                                <p>{thread.Name}</p>
+                                <b style={'color: #' + thread.Hash}>{thread.Name}</b>
 
                                 <div class="flex space-x-2">
                                     <i class={'flag ' + thread.Country}></i>
@@ -102,7 +97,7 @@
                             <hr class="opacity-50"/>
                             <footer class="p-4 flex justify-start items-center space-x-4">
                                 <div class="flex-auto flex justify-between items-center">
-                                    <p>{post.Name}</p>
+                                    <b style={'color: #' + post.Hash}>{post.Name}</b>
 
                                     <div class="flex space-x-2">
                                         <i class={'flag ' + post.Country}></i>
@@ -120,7 +115,10 @@
                     {/each}
                 </div>
                 <!-- Modified hr tag with full-width-hr class -->
-                <hr class="full-width-hr"/>
+                {#if index < threadPreviews.length - 1}
+                    <hr class="full-width-hr"/>
+                    <hr class="full-width-hr"/>
+                {/if}
             {/each}
         </div>
     </div>

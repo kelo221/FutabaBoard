@@ -20,6 +20,6 @@ func Setup(app *fiber.App) {
 	api.Get("thread/*", Controllers.FetchThread)
 	api.Get("page/*", Controllers.FetchThreadPreviews)
 	api.Get("post/*", Controllers.FetchPost)
-	api.Get("test", Controllers.TestFunction)
+	api.Post("test", Controllers.TestFunction)
 
 }

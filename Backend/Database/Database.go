@@ -23,7 +23,8 @@ func Init() {
 		panic("failed to connect database")
 	}
 
-	err = db.AutoMigrate(&DataModels.Post{}, &DataModels.Thread{}, &DataModels.Bans{}, &DataModels.ImagePrivilege{})
+	err = db.AutoMigrate(&DataModels.Post{}, &DataModels.Thread{}, &DataModels.Bans{},
+		&DataModels.ImagePrivilege{}, &DataModels.ImageUpload{}, &DataModels.ImageBans{})
 	if err != nil {
 		return
 	}

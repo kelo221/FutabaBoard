@@ -8,8 +8,18 @@ import (
 )
 
 func main() {
-	Database.Init()
-	app := fiber.New()
+
+	app := fiber.New(fiber.Config{
+		//	Prefork:       true,
+		CaseSensitive: true,
+		StrictRouting: true,
+		ServerHeader:  "Fiber",
+		AppName:       "Hesat Backend",
+	})
+
+	if fiber.IsChild() == false {
+		Database.Init()
+	}
 
 	app.Static("/", "./public")
 

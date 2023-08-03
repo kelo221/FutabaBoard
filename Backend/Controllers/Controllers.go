@@ -3,20 +3,79 @@ package Controllers
 import (
 	db "backend/Database"
 	DataModels "backend/ORM"
-	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/zeebo/blake3"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var postSalt string
+
+const saltFileName = ".env"
+
+var salt string
+
+func generateSalt() (string, error) {
+	salt := make([]byte, 16)
+	_, err := rand.Read(salt)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(salt), nil
+}
+
+func writeSaltToFile(salt string) error {
+	return os.WriteFile(saltFileName, []byte(salt), 0644)
+}
+
+func readSaltFromFile() (string, error) {
+	data, err := os.ReadFile(saltFileName)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func init() {
+
+	if _, saltErr := os.Stat(saltFileName); os.IsNotExist(saltErr) {
+
+		_salt, err := generateSalt()
+		if err != nil {
+			fmt.Println("Error generating salt:", err)
+			os.Exit(1)
+		}
+
+		// Write the salt to the environment file
+		err = writeSaltToFile(_salt)
+		if err != nil {
+			fmt.Println("Error writing salt to file:", err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Salt has been generated and saved to", saltFileName)
+	} else {
+		// Read the existing salt from the environment file
+		var err error
+		salt, err = readSaltFromFile()
+		if err != nil {
+			fmt.Println("Error reading salt from file:", err)
+			os.Exit(1)
+		}
+
+	}
+}
 
 func init() {
 	var err error
@@ -32,6 +91,144 @@ func Register(c *fiber.Ctx) error {
 
 func Login(c *fiber.Ctx) error {
 	return nil
+}
+
+func imageCheck(c *fiber.Ctx, file *multipart.FileHeader) (error, string) {
+
+	if !checkImagePrivilege("test") {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid credentials, or you lack the permission to post images.",
+		}), ""
+	}
+
+	imageHash, err := generateHash(file, salt)
+	fmt.Println(imageHash)
+	if err != nil {
+		return err, ""
+	}
+
+	maxFileSize := 5 * 1024 * 1024 // 5MB in bytes
+
+	// Check file size
+	if file.Size > int64(maxFileSize) {
+		return c.Status(fiber.StatusRequestEntityTooLarge).JSON(fiber.Map{
+			"error": "File size exceeds the maximum limit (5MB).",
+		}), ""
+	}
+
+	// Check file type (example: allow only JPEG, PNG, and GIF images)
+	allowedTypes := map[string]bool{
+		"image/jpeg": true,
+		"image/png":  true,
+		"image/gif":  true,
+	}
+
+	if !allowedTypes[file.Header.Get("Content-Type")] {
+		return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
+			"error": "Only JPEG, PNG, and GIF images are allowed.",
+		}), ""
+	}
+
+	return err, imageHash
+}
+
+func TestFunction(c *fiber.Ctx) error {
+
+	var newThread DataModels.Thread
+
+	// Parse the multipart form:
+	if form, err := c.MultipartForm(); err == nil {
+		if post := form.Value["jsonFile"]; len(post) > 0 {
+
+			if marshErr := json.Unmarshal([]byte(post[0]), &newThread); marshErr != nil {
+				return marshErr
+			}
+
+			if newThread.PostImage.Filename == "" {
+				c.Status(400)
+				return c.Status(400).JSON(fiber.Map{
+					"message": "Missing post content, must include an image for OP.",
+				})
+			}
+
+			if newThread.Topic == "" {
+				c.Status(400)
+				return c.Status(400).JSON(fiber.Map{
+					"message": "Missing topic for the thread.",
+				})
+			}
+
+			var hashErr error
+			newThread.Hash, hashErr = generateHashShort(c.IP(), postSalt)
+			if hashErr != nil {
+				return hashErr
+			}
+
+			newThread.IpAddress = c.IP()
+
+		}
+		if file := form.File["image"]; len(file) > 0 {
+
+			var imageErr error
+			imageErr, newThread.PostImage.ImageHash = imageCheck(c, file[0])
+			if imageErr != nil {
+				return imageErr
+			}
+
+		}
+
+	}
+
+	db.GetDB().Create(&newThread)
+
+	return nil
+}
+
+func checkImagePrivilege(hash string) bool {
+	return true
+}
+
+func PostImage(c *fiber.Ctx) error {
+	// Set a file size limit (5MB in this case)
+	maxFileSize := 5 * 1024 * 1024 // 5MB in bytes
+
+	// Parse the form file
+	file, err := c.FormFile("file")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "No file provided or invalid file field name.",
+		})
+	}
+
+	// Check file size
+	if file.Size > int64(maxFileSize) {
+		return c.Status(fiber.StatusRequestEntityTooLarge).JSON(fiber.Map{
+			"error": "File size exceeds the maximum limit (5MB).",
+		})
+	}
+
+	// Check file type (example: allow only JPEG, PNG, and GIF images)
+	allowedTypes := map[string]bool{
+		"image/jpeg": true,
+		"image/png":  true,
+		"image/gif":  true,
+	}
+	if !allowedTypes[file.Header.Get("Content-Type")] {
+		return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
+			"error": "Only JPEG, PNG, and GIF images are allowed.",
+		})
+	}
+
+	// Sanitize file name
+	fileName := sanitizeFileName(file.Filename)
+
+	// Save the uploaded file
+	err = c.SaveFile(file, filepath.Join("public", fileName))
+	if err != nil {
+		return err
+	}
+
+	return c.SendString("File uploaded successfully!")
 }
 
 func Ban(c *fiber.Ctx) error {
@@ -123,14 +320,12 @@ func Thread(c *fiber.Ctx) error {
 		})
 	}
 
-	if newThread.Country == "" {
-		c.Status(400)
-		return c.Status(400).JSON(fiber.Map{
-			"message": "Missing flags.",
-		})
+	var err error
+	newThread.Hash, err = generateHashShort(c.IP(), postSalt)
+	if err != nil {
+		return err
 	}
 
-	newThread.Hash = generateMD5HashWithSalt(c.IP(), postSalt)
 	newThread.IpAddress = c.IP()
 
 	db.GetDB().Create(&newThread)
@@ -172,7 +367,12 @@ func Post(c *fiber.Ctx) error {
 		})
 	}
 
-	newPost.Hash = generateMD5HashWithSalt(c.IP(), postSalt)
+	var err error
+	newPost.Hash, err = generateHashShort(c.IP(), postSalt)
+	if err != nil {
+		return err
+	}
+
 	newPost.IpAddress = c.IP()
 
 	db.GetDB().Create(&newPost)
@@ -264,13 +464,6 @@ func FetchPost(c *fiber.Ctx) error {
 	}
 }
 
-func TestFunction(c *fiber.Ctx) error {
-	ipAddress := c.IP()
-	md5Hash := generateMD5HashWithSalt(c.IP(), postSalt)
-
-	return c.SendString("Your IP address is: " + ipAddress + " And your hash is:" + md5Hash)
-}
-
 func isUserBanned(ipAddress string) (bool, time.Time) {
 	var banCheck DataModels.Bans
 
@@ -285,10 +478,44 @@ func isUserBanned(ipAddress string) (bool, time.Time) {
 	return result.RowsAffected > 0, banCheck.ExpiringTimeUnix
 }
 
-func generateMD5HashWithSalt(input, salt string) string {
-	md5Hash := md5.New()
-	md5Hash.Write([]byte(input + salt))
-	return hex.EncodeToString(md5Hash.Sum(nil))[:6]
+func generateHashShort(input, salt string) (string, error) {
+	hash := blake3.New()
+	_, err := hash.Write([]byte(input + salt))
+	return hex.EncodeToString(hash.Sum(nil))[:6], err
+}
+
+func generateHash(file *multipart.FileHeader, salt string) (string, error) {
+	// Open the file
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+
+	var buf []byte
+
+	for {
+		buffer := make([]byte, 1024)
+		n, err := src.Read(buffer)
+		if err == io.EOF {
+			break
+		}
+		if err != nil && err != io.EOF {
+			return "", err
+		}
+		buf = append(buf, buffer[:n]...)
+	}
+
+	data := append(buf, []byte(salt)...)
+
+	hasher := blake3.New()
+	_, err = hasher.Write(data)
+	if err != nil {
+		return "", err
+	}
+	hash := hex.EncodeToString(hasher.Sum(nil))
+
+	return hash, err
 }
 
 func generateRandomString(length int) string {
@@ -306,4 +533,18 @@ func generateRandomString(length int) string {
 	randomString := base64.URLEncoding.EncodeToString(randomBytes)
 	randomString = randomString[:length]
 	return randomString
+}
+
+// SanitizeFileName removes any directory traversal characters from the given file name.
+func sanitizeFileName(fileName string) string {
+	// Remove any path components from the file name
+	fileName = filepath.Base(fileName)
+
+	// Replace any invalid characters with underscores
+	invalidChars := []string{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}
+	for _, invalidChar := range invalidChars {
+		fileName = strings.ReplaceAll(fileName, invalidChar, "_")
+	}
+
+	return fileName
 }

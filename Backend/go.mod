@@ -4,6 +4,7 @@ go 1.21rc2
 
 require (
 	github.com/gofiber/fiber/v2 v2.48.0
+	github.com/zeebo/blake3 v0.2.3
 	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.2
 )
@@ -14,6 +15,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.16.3 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
