@@ -6,7 +6,7 @@ import (
 
 type UserInfo struct {
 	IpAddress string `json:"-"`
-	Hash      string `json:"Hash"`
+	UserHash  string `json:"UserHash"`
 }
 
 type ImagePrivilege struct {
@@ -23,8 +23,9 @@ type Bans struct {
 
 // ImageUpload Contains the filename and the hash of the image.
 type ImageUpload struct {
-	Filename  string `json:"Filename"`
-	ImageHash string `json:"ImageHash,omitempty"`
+	Filename     string `json:"Filename"`
+	ImageHash    string `json:"ImageHash,omitempty"`
+	OmitFilename bool   `json:"-"`
 }
 
 type ImageBans struct {

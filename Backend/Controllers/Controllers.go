@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/zeebo/blake3"
 	"io"
 	"mime/multipart"
@@ -121,11 +122,13 @@ func imageCheck(c *fiber.Ctx, file *multipart.FileHeader) (error, string) {
 		"image/jpeg": true,
 		"image/png":  true,
 		"image/gif":  true,
+		"video/mp4":  true,
+		"video/webm": true,
+		"image/webp": true,
 	}
-
 	if !allowedTypes[file.Header.Get("Content-Type")] {
 		return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
-			"error": "Only JPEG, PNG, and GIF images are allowed.",
+			"error": "File is not a JPEG, PNG, GIF, MP4, WEBM or a WEBP.",
 		}), ""
 	}
 
@@ -136,19 +139,11 @@ func TestFunction(c *fiber.Ctx) error {
 
 	var newThread DataModels.Thread
 
-	// Parse the multipart form:
 	if form, err := c.MultipartForm(); err == nil {
 		if post := form.Value["jsonFile"]; len(post) > 0 {
 
 			if marshErr := json.Unmarshal([]byte(post[0]), &newThread); marshErr != nil {
 				return marshErr
-			}
-
-			if newThread.PostImage.Filename == "" {
-				c.Status(400)
-				return c.Status(400).JSON(fiber.Map{
-					"message": "Missing post content, must include an image for OP.",
-				})
 			}
 
 			if newThread.Topic == "" {
@@ -159,28 +154,41 @@ func TestFunction(c *fiber.Ctx) error {
 			}
 
 			var hashErr error
-			newThread.Hash, hashErr = generateHashShort(c.IP(), postSalt)
+			newThread.UserHash, hashErr = generateHashShort(c.IP(), postSalt)
 			if hashErr != nil {
 				return hashErr
 			}
 
 			newThread.IpAddress = c.IP()
-
 		}
+
 		if file := form.File["image"]; len(file) > 0 {
 
+			// ImageCheck function checks if the file is correct format and size. User privilege is verified.
+			// Returns a UserHash of the file or an error.
 			var imageErr error
 			imageErr, newThread.PostImage.ImageHash = imageCheck(c, file[0])
 			if imageErr != nil {
 				return imageErr
 			}
 
-		}
+			imgPostErr := PostImage(c, newThread.PostImage.ImageHash, strconv.FormatInt(newThread.ID, 10), file[0])
+			if imgPostErr != nil {
+				return imgPostErr
+			}
 
+			// Filename is the original filename that is shown in the thread
+			newImage := DataModels.ImageUpload{
+				Filename:     sanitizeFileName(file[0].Filename),
+				ImageHash:    newThread.PostImage.ImageHash,
+				OmitFilename: newThread.PostImage.OmitFilename,
+			}
+
+			db.GetDB().Create(&newImage)
+		}
 	}
 
 	db.GetDB().Create(&newThread)
-
 	return nil
 }
 
@@ -188,47 +196,20 @@ func checkImagePrivilege(hash string) bool {
 	return true
 }
 
-func PostImage(c *fiber.Ctx) error {
-	// Set a file size limit (5MB in this case)
-	maxFileSize := 5 * 1024 * 1024 // 5MB in bytes
+func PostImage(c *fiber.Ctx, ImageHash string, ID string, file *multipart.FileHeader) error {
 
-	// Parse the form file
-	file, err := c.FormFile("file")
+	// Image is saved in the thread's folder based on its hash value.
+	if folderErr := os.Mkdir("public/threadContent/"+ID, os.ModePerm); folderErr != nil {
+		log.Debug(folderErr)
+	}
+
+	extension := filepath.Ext(file.Filename)
+	err := c.SaveFile(file, filepath.Join("public/threadContent/"+ID, ImageHash+extension))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "No file provided or invalid file field name.",
-		})
+		log.Debug(err)
 	}
 
-	// Check file size
-	if file.Size > int64(maxFileSize) {
-		return c.Status(fiber.StatusRequestEntityTooLarge).JSON(fiber.Map{
-			"error": "File size exceeds the maximum limit (5MB).",
-		})
-	}
-
-	// Check file type (example: allow only JPEG, PNG, and GIF images)
-	allowedTypes := map[string]bool{
-		"image/jpeg": true,
-		"image/png":  true,
-		"image/gif":  true,
-	}
-	if !allowedTypes[file.Header.Get("Content-Type")] {
-		return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
-			"error": "Only JPEG, PNG, and GIF images are allowed.",
-		})
-	}
-
-	// Sanitize file name
-	fileName := sanitizeFileName(file.Filename)
-
-	// Save the uploaded file
-	err = c.SaveFile(file, filepath.Join("public", fileName))
-	if err != nil {
-		return err
-	}
-
-	return c.SendString("File uploaded successfully!")
+	return nil
 }
 
 func Ban(c *fiber.Ctx) error {
@@ -321,7 +302,7 @@ func Thread(c *fiber.Ctx) error {
 	}
 
 	var err error
-	newThread.Hash, err = generateHashShort(c.IP(), postSalt)
+	newThread.UserHash, err = generateHashShort(c.IP(), postSalt)
 	if err != nil {
 		return err
 	}
@@ -368,7 +349,7 @@ func Post(c *fiber.Ctx) error {
 	}
 
 	var err error
-	newPost.Hash, err = generateHashShort(c.IP(), postSalt)
+	newPost.UserHash, err = generateHashShort(c.IP(), postSalt)
 	if err != nil {
 		return err
 	}
@@ -486,9 +467,9 @@ func generateHashShort(input, salt string) (string, error) {
 
 func generateHash(file *multipart.FileHeader, salt string) (string, error) {
 	// Open the file
-	src, err := file.Open()
-	if err != nil {
-		return "", err
+	src, openingErr := file.Open()
+	if openingErr != nil {
+		return "", openingErr
 	}
 	defer src.Close()
 
@@ -509,7 +490,7 @@ func generateHash(file *multipart.FileHeader, salt string) (string, error) {
 	data := append(buf, []byte(salt)...)
 
 	hasher := blake3.New()
-	_, err = hasher.Write(data)
+	_, err := hasher.Write(data)
 	if err != nil {
 		return "", err
 	}

@@ -57,7 +57,8 @@ type Post struct {
 }
 
 type PostImage struct {
-	Filename  string `json:"Filename"`
-	ImageInfo string `json:"ImageInfo"`
-	ImageHash string `json:"ImageHash"`
+	Filename     string `json:"Filename"`
+	ImageInfo    string `json:"ImageInfo"`
+	ImageHash    string `json:"ImageHash"`
+	OmitFilename bool   `json:"-"`
 }
