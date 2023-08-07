@@ -1,7 +1,6 @@
 package DataModels
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -85,7 +84,6 @@ func calculatePages(tx *gorm.DB) error {
 		return err
 	} else {
 		pageCount := -1
-		fmt.Println(threadsToMove)
 		for i := range threadsToMove {
 			if i%threadsPerPage == 0 {
 				pageCount++

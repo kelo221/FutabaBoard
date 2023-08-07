@@ -15,13 +15,14 @@ export interface ThreadPreview {
     Page: number
     PostCount: number
     PostImage: PostImage
-    Hash: string
+    UserHash: string
     Posts: Post[]
 }
 
 export interface PostImage {
-    Filename: string;
-    ImageInfo: string;
+    Filename: string
+    ImageInfo: string
+    ImageHash: string
 }
 
 export interface Post {
@@ -33,10 +34,11 @@ export interface Post {
     ExtraFlags: string
     ParentThread: number
     PostImage: PostImage2
-    Hash: string
+    UserHash: string
 }
 
 export interface PostImage2 {
-    Filename: string;
-    ImageInfo: string;
+    Filename: string
+    ImageInfo: string
+    ImageHash: string
 }

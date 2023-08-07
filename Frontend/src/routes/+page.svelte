@@ -52,7 +52,7 @@
                         <div class="p-4 space-y-4">
                             <h3 class="h3" data-toc-ignore>{thread.Topic}</h3>
                             <article class="flex items-center">
-                                <img src={"http://localhost:8000/ThreadContent/Sample/cow_s.jpg"}>
+                                <img src={"http://localhost:8000/ThreadContent/" + thread.ID + "/" + thread.PostImage.ImageHash + "_small.png"}>
                                 <p style="text-align: left; padding-left: 10px">
                                     {thread.Text}
                                 </p>
@@ -71,8 +71,8 @@
                                 <p>No. {thread.ID}</p>
                                 <p>{thread.PostCount} Posts</p>
                                 <p>{parseDateStringToDate(thread.UnixTime).toLocaleString()}</p>
-                                <p style={'color: #' + thread.Hash}>
-                                    {"#" + thread.Hash.toUpperCase()}
+                                <p style={'color: #' + thread.UserHash}>
+                                    {"#" + thread.UserHash}
                                 </p>
 
                                 <button type="button" class="btn variant-filled">
@@ -88,7 +88,8 @@
                     {#each thread.Posts as post}
                         <div class="card">
                             <div class="p-4 space-y-4">
-                                <article>
+                                <article class="flex items-center">
+                                    <img src={"http://localhost:8000/ThreadContent/" + thread.ID + "/" + post.PostImage.ImageHash + "_small.png"}>
                                     <p style="text-align: left; padding-left: 10px">
                                         {post.Text}
                                     </p>
@@ -106,8 +107,8 @@
 
                                     <p>No. {post.ID}</p>
                                     <p>{parseDateStringToDate(post.UnixTime).toLocaleString()}</p>
-                                    <p style={'color: #' + post.Hash}>
-                                        {"#" + post.Hash.toUpperCase()}
+                                    <p style={'color: #' + post.UserHash}>
+                                        {"#" + post.UserHash}
                                     </p>
                                 </div>
                             </footer>

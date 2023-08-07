@@ -24,7 +24,7 @@ func Init() {
 	}
 
 	err = db.AutoMigrate(&DataModels.Post{}, &DataModels.Thread{}, &DataModels.Bans{},
-		&DataModels.ImagePrivilege{}, &DataModels.ImageUpload{}, &DataModels.ImageBans{})
+		&DataModels.ImagePrivilege{}, &DataModels.ImageBans{})
 	if err != nil {
 		return
 	}

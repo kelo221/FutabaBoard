@@ -3,6 +3,7 @@ module backend
 go 1.21rc2
 
 require (
+	github.com/disintegration/imaging v1.6.2
 	github.com/gofiber/fiber/v2 v2.48.0
 	github.com/zeebo/blake3 v0.2.3
 	gorm.io/driver/sqlite v1.5.2
@@ -24,5 +25,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.48.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
+	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
 	golang.org/x/sys v0.10.0 // indirect
 )

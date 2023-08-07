@@ -21,13 +21,6 @@ type Bans struct {
 	Reason           string    `json:"Reason"`
 }
 
-// ImageUpload Contains the filename and the hash of the image.
-type ImageUpload struct {
-	Filename     string `json:"Filename"`
-	ImageHash    string `json:"ImageHash,omitempty"`
-	OmitFilename bool   `json:"-"`
-}
-
 type ImageBans struct {
 	ImageHash          string `json:"ImageHash,omitempty"`
 	ContentDescription string `json:"ContentDescription"`
