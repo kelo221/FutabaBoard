@@ -16,7 +16,7 @@ export interface ThreadPreview {
     PostCount: number
     PostImage: PostImage
     UserHash: string
-    Posts: Post[]
+    Post: Post[]
 }
 
 export interface PostImage {

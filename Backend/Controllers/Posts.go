@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"golang.org/x/net/html"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -39,6 +41,48 @@ func TestFunction(c *fiber.Ctx) error {
 
 func checkImagePrivilege(hash string) bool {
 	return true
+}
+
+func stripHTMLTags(input string) string {
+	reader := strings.NewReader(input)
+	tokenizer := html.NewTokenizer(reader)
+	var result strings.Builder
+
+	for {
+		tokenType := tokenizer.Next()
+		switch tokenType {
+		case html.ErrorToken:
+			return result.String()
+		case html.TextToken:
+			result.WriteString(tokenizer.Token().Data)
+		}
+	}
+}
+
+func formatPostText(text string) string {
+	lines := strings.Split(text, "\n")
+	var result strings.Builder
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			if strings.HasPrefix(line, ">") {
+				result.WriteString("<p style=\"color: green;\">")
+				result.WriteString("&gt;" + line[1:])
+				result.WriteString("</p>\n")
+			} else if strings.HasPrefix(line, "<") {
+				result.WriteString("<p style=\"color: red;\">")
+				result.WriteString("&lt;" + line[1:])
+				result.WriteString("</p>\n")
+			} else {
+				result.WriteString("<p>")
+				result.WriteString(line)
+				result.WriteString("</p>\n")
+			}
+		}
+	}
+
+	return result.String()
 }
 
 func Ban(c *fiber.Ctx) error {
@@ -175,6 +219,13 @@ func Thread(c *fiber.Ctx) error {
 				newThread.Name = "Anon"
 			}
 
+			if len(newThread.Text) > 3000 {
+				return c.Status(http.StatusBadRequest).JSON("Post longer than 3000 characters.")
+			}
+
+			// Remove HTML tags and add quote coloring
+			newThread.Text = formatPostText(stripHTMLTags(newThread.Text))
+
 			var hashErr error
 			newThread.UserHash, hashErr = generateHashShort(c.IP(), postSalt)
 			if hashErr != nil {
@@ -232,6 +283,11 @@ func Post(c *fiber.Ctx) error {
 				newPost.Name = "Anon"
 			}
 
+			if len(newPost.Text) > 3000 {
+				return c.Status(http.StatusBadRequest).JSON("Post longer than 3000 characters.")
+			}
+
+			newPost.Text = formatPostText(stripHTMLTags(newPost.Text))
 			var hashErr error
 			newPost.UserHash, hashErr = generateHashShort(c.IP(), postSalt)
 			if hashErr != nil {
@@ -253,13 +309,15 @@ func Post(c *fiber.Ctx) error {
 
 			var imageHashCheck DataModels.Post
 
-			//Check if image already exists, if so do not write it again to disk.
-			result := db.GetDB().Where("image_hash = ?", newPost.PostImage.ImageHash).Limit(1).Find(&imageHashCheck)
-			if result.RowsAffected < 0 {
+			//Check if image already exists
+			result := db.GetDB().Where("image_hash = ? AND parent_thread = ?", newPost.PostImage.ImageHash, newPost.ParentThread).Limit(1).Find(&imageHashCheck)
+			if result.RowsAffected < 0 || imageHashCheck.ID == 0 {
 				imgPostErr := PostImage(c, newPost.PostImage.ImageHash, strconv.FormatInt(newPost.ParentThread, 10), file[0])
 				if imgPostErr != nil {
 					return imgPostErr
 				}
+			} else {
+				return c.Status(http.StatusBadRequest).JSON("Image already exists in this thread.")
 			}
 
 			// Filename is the original filename that is shown in the thread
@@ -299,7 +357,9 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 				db.GetDB().Where("parent_thread = ?", thread.ID).Order("id desc").Limit(2).Find(&posts)
 
 				//Swap order for preview
-				posts[0], posts[1] = posts[1], posts[0]
+				if len(posts) > 0 {
+					posts[0], posts[1] = posts[1], posts[0]
+				}
 
 				colWithPosts = append(colWithPosts, DataModels.ThreadPreview{
 					SharedID:   thread.SharedID,

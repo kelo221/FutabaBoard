@@ -193,13 +193,17 @@ func imageCheck(c *fiber.Ctx, file *multipart.FileHeader) (error, string) {
 		"image/jpg":  true,
 		"image/png":  true,
 		"image/gif":  true,
+		/*"audio/aac":  true,
+		"audio/ogg":  true,
+		"audio/opus": true,*/
+
 		/*		"video/mp4":  true,
 				"video/webm": true,*/
 	}
 
 	if !allowedTypes[file.Header.Get("Content-Type")] {
 		return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
-			"error": "File is not a JPEG, PNG, GIF, MP4, WEBM or a WEBP.",
+			"error": "Not a JPEG, PNG, OGG,AAC, OPUS, GIF, MP4, WEBM or a WEBP.",
 		}), ""
 	}
 
