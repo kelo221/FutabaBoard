@@ -4,6 +4,7 @@
     import Icon from "@iconify/svelte";
 
     export let threadID
+    export let isOpen
 
     let isMobile = false;
 
@@ -37,9 +38,13 @@
 </script>
 
 <div class="card" style="display: flex; flex-direction: column;">
+    <div class="container flex flex-col items-center justify-center m-2">
 
+    {#if postType === 'thread'}
+        <h1 class="h3">  {content.Topic}</h1>
+    {/if}
+    </div>
     <div class="flex" style="text-align: left; flex-grow: 1;">
-
         {#if !isMobile}
             <div class="container m-4" style="text-align: left; flex-grow: 1;">
                 {@html content.Text}
@@ -51,8 +56,6 @@
             </div>
             {/if}
         {/if}
-
-
             {#if content.PostImage.ImageHash }
                 <div class="container flex flex-col items-center justify-center m-4">
                     <img
@@ -74,7 +77,6 @@
         <div class="flex-auto flex justify-between items-center">
 
             {#if isMobile}
-
                 {#if postType === 'thread'}
                 <div class="grid">
                     <b style={'color: #' + content.Hash}>{content.Name}</b>
@@ -87,19 +89,13 @@
                 <div class="grid">
                     <p>#{content.ID}</p>
                     <p>{content.PostCount} Posts</p>
-
                 </div>
-
                     <div class="grid">
                         <p>{parseDateStringToDate(content.UnixTime)}</p>
                         <p style={'color: #' + content.UserHash}>
                             {"#" + content.UserHash} </p>
                     </div>
-
-
-
                 {:else}
-
                     <div class="grid">
                         <b style={'color: #' + content.Hash}>{content.Name}</b>
                         <div class="flex space-x-1">
@@ -107,20 +103,20 @@
                             <img src={`http://${window.location.hostname}:8000/Flags/Regional/${content.ExtraFlags}.png`}/>
                         </div>
                     </div>
-
                     <p>#{content.ID}</p>
                     <p>{parseDateStringToDate(content.UnixTime)}</p>
                     <p style={'color: #' + content.UserHash}>
                         {"#" + content.UserHash} </p>
                 {/if}
-
             {:else}
 
             <div class="grid">
                 <b style={'color: #' + content.Hash}>{content.Name}</b>
                 <div class="flex space-x-1">
                     <i class={'flag ' + content.Country}></i>
+                    {#if content.ExtraFlags !== ""}
                     <img src={`http://${window.location.hostname}:8000/Flags/Regional/${content.ExtraFlags}.png`}/>
+                    {/if}
                 </div>
             </div>
             <p>#{content.ID}</p>
@@ -129,19 +125,20 @@
             <p style={'color: #' + content.UserHash}>
                 {"#" + content.UserHash}
             </p>
-
             {/if}
 
         </div>
-        {#if postType === 'thread'}
+        {#if postType === 'thread' && isOpen === false}
             {#if isMobile}
                 <button class="btn variant-filled mobile-icon-btn" type="button">
                     <Icon icon="ooui:new-window-rtl" />
                 </button>
             {:else}
+                <a href={`thread/${content.ID}`}>
                 <button class="btn variant-filled" type="button">
                     Open Thread
                 </button>
+                </a>
             {/if}
         {/if}
     </footer>

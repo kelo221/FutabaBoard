@@ -1,13 +1,3 @@
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
-// and what to do when importing types
-declare namespace App {
-	// interface Locals {}
-	// interface PageData {}
-	// interface Error {}
-	// interface Platform {}
-}
-
 export interface Thread {
 	ID: number;
 	UnixTime: string;
@@ -47,9 +37,4 @@ export interface PostImage2 {
 	Filename: string;
 	ImageInfo: string;
 	ImageHash: string;
-}
-export interface UserPrefences {
-	Theme: string;
-	Key: string;
-	useHashFileName: boolean;
 }

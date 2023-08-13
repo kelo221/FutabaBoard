@@ -18,6 +18,7 @@ func Setup(app *fiber.App) {
 	api.Post("post", Controllers.Post)
 
 	api.Get("thread/*", Controllers.FetchThread)
+	api.Get("pageCount", Controllers.FetchPageCount)
 	api.Get("page/*", Controllers.FetchThreadPreviews)
 	api.Get("post/*", Controllers.FetchPost)
 	api.Post("test", Controllers.TestFunction)

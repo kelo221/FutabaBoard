@@ -43,6 +43,16 @@ func checkImagePrivilege(hash string) bool {
 	return true
 }
 
+func FetchPageCount(c *fiber.Ctx) error {
+
+	var maxPageCount DataModels.Thread
+	if err := db.GetDB().Order("page desc").Limit(1).Find(&maxPageCount).Error; err != nil {
+		return err
+	}
+
+	return c.Status(http.StatusOK).JSON(maxPageCount.Page)
+}
+
 func stripHTMLTags(input string) string {
 	reader := strings.NewReader(input)
 	tokenizer := html.NewTokenizer(reader)
@@ -201,6 +211,25 @@ func Thread(c *fiber.Ctx) error {
 
 	var newThread DataModels.Thread
 
+	var maxThreadID DataModels.Thread
+	if err := db.GetDB().Order("id desc").Limit(1).Find(&maxThreadID).Error; err != nil {
+		return err
+	}
+	var maxPostID DataModels.Post
+	if err := db.GetDB().Order("id desc").Limit(1).Find(&maxPostID).Error; err != nil {
+		return err
+	}
+
+	var _id int64
+
+	if maxPostID.SharedID.ID > maxThreadID.SharedID.ID {
+		_id = maxPostID.ID + 1
+	} else {
+		_id = maxThreadID.ID + 1
+	}
+
+	ID := strconv.FormatInt(_id, 10)
+
 	if form, err := c.MultipartForm(); err == nil {
 		if post := form.Value["jsonFile"]; len(post) > 0 {
 
@@ -208,12 +237,7 @@ func Thread(c *fiber.Ctx) error {
 				return marshErr
 			}
 
-			if newThread.Topic == "" {
-				c.Status(400)
-				return c.Status(400).JSON(fiber.Map{
-					"message": "Missing topic for the thread.",
-				})
-			}
+			fmt.Println(newThread.Topic)
 
 			if newThread.Name == "" {
 				newThread.Name = "Anon"
@@ -223,11 +247,9 @@ func Thread(c *fiber.Ctx) error {
 				return c.Status(http.StatusBadRequest).JSON("Post longer than 3000 characters.")
 			}
 
-			// Remove HTML tags and add quote coloring
 			newThread.Text = formatPostText(stripHTMLTags(newThread.Text))
-
 			var hashErr error
-			newThread.UserHash, hashErr = generateHashShort(c.IP(), postSalt)
+			newThread.UserHash, hashErr = generateHashShort(c.IP(), postSalt+strconv.FormatInt(newThread.ID, 10))
 			if hashErr != nil {
 				return hashErr
 			}
@@ -245,7 +267,7 @@ func Thread(c *fiber.Ctx) error {
 				return imageErr
 			}
 
-			imgPostErr := PostOPImage(c, newThread.PostImage.ImageHash, file[0])
+			imgPostErr := PostOPImage(c, newThread.PostImage.ImageHash, file[0], ID)
 			if imgPostErr != nil {
 				return imgPostErr
 			}
@@ -255,6 +277,8 @@ func Thread(c *fiber.Ctx) error {
 
 			newThread.PostImage.ImageInfo = fmt.Sprintf("%.3f", float64(file[0].Size)/(1024*1024)) + " Mb " + filepath.Ext(file[0].Filename)
 		}
+	} else {
+		return err
 	}
 
 	db.GetDB().Create(&newThread)
@@ -289,7 +313,7 @@ func Post(c *fiber.Ctx) error {
 
 			newPost.Text = formatPostText(stripHTMLTags(newPost.Text))
 			var hashErr error
-			newPost.UserHash, hashErr = generateHashShort(c.IP(), postSalt)
+			newPost.UserHash, hashErr = generateHashShort(c.IP(), postSalt+strconv.FormatInt(newPost.ParentThread, 10))
 			if hashErr != nil {
 				return hashErr
 			}
@@ -325,6 +349,8 @@ func Post(c *fiber.Ctx) error {
 
 			newPost.PostImage.ImageInfo = fmt.Sprintf("%.3f", float64(file[0].Size)/(1024*1024)) + " Mb " + filepath.Ext(file[0].Filename)
 		}
+	} else {
+		return err
 	}
 
 	db.GetDB().Create(&newPost)
@@ -347,7 +373,7 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 		return err
 	} else {
 		var collection []DataModels.Thread
-		if err = db.GetDB().Where("page = ?", threadID).Find(&collection).Error; err != nil {
+		if err = db.GetDB().Where("page = ?", threadID).Order("last_bump desc").Find(&collection).Error; err != nil {
 			return err
 		} else {
 			var colWithPosts []DataModels.ThreadPreview
@@ -357,7 +383,7 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 				db.GetDB().Where("parent_thread = ?", thread.ID).Order("id desc").Limit(2).Find(&posts)
 
 				//Swap order for preview
-				if len(posts) > 0 {
+				if len(posts) > 1 {
 					posts[0], posts[1] = posts[1], posts[0]
 				}
 
@@ -395,7 +421,29 @@ func FetchThread(c *fiber.Ctx) error {
 		if err = db.GetDB().Where("parent_thread = ?", threadID).Find(&collection).Error; err != nil {
 			return err
 		} else {
-			return c.JSON(collection)
+			var OP DataModels.Thread
+			db.GetDB().Where("id = ?", threadID).Find(&OP)
+
+			if OP.Topic == "" {
+				return fiber.NewError(fiber.StatusNotFound, "No threads with ID "+threadIDString)
+			}
+
+			fullThread := DataModels.ThreadPreview{
+				SharedID:   OP.SharedID,
+				UnixTime:   OP.UnixTime,
+				LastBump:   OP.LastBump,
+				Name:       OP.Name,
+				Text:       OP.Text,
+				Topic:      OP.Topic,
+				Country:    OP.Country,
+				ExtraFlags: OP.ExtraFlags,
+				Sticky:     OP.Sticky,
+				PostCount:  OP.PostCount,
+				PostImage:  OP.PostImage,
+				UserInfo:   OP.UserInfo,
+				Posts:      collection,
+			}
+			return c.JSON(fullThread)
 		}
 	}
 }

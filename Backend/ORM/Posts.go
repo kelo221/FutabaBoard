@@ -21,6 +21,7 @@ type Thread struct {
 	Country    string    `json:"Country"`
 	ExtraFlags string    `json:"ExtraFlags"`
 	Sticky     bool      `json:"Sticky"`
+	Locked     bool      `json:"Locked"`
 	Page       int       `json:"Page"`
 	PostCount  int       `json:"PostCount"`
 	PostImage  PostImage `json:"PostImage,omitempty" gorm:"embedded"`

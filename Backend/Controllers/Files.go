@@ -1,8 +1,6 @@
 package Controllers
 
 import (
-	db "backend/Database"
-	DataModels "backend/ORM"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
@@ -17,7 +15,6 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -126,26 +123,7 @@ func PostImage(c *fiber.Ctx, imageHash string, parentThreadID string, file *mult
 	return nil
 }
 
-func PostOPImage(c *fiber.Ctx, imageHash string, file *multipart.FileHeader) error {
-
-	var maxThreadID DataModels.Thread
-	if err := db.GetDB().Order("id desc").Limit(1).Find(&maxThreadID).Error; err != nil {
-		return err
-	}
-	var maxPostID DataModels.Post
-	if err := db.GetDB().Order("id desc").Limit(1).Find(&maxPostID).Error; err != nil {
-		return err
-	}
-
-	var _id int64
-
-	if maxPostID.SharedID.ID > maxThreadID.SharedID.ID {
-		_id = maxPostID.ID + 1
-	} else {
-		_id = maxThreadID.ID + 1
-	}
-
-	ID := strconv.FormatInt(_id, 10)
+func PostOPImage(c *fiber.Ctx, imageHash string, file *multipart.FileHeader, ID string) error {
 
 	// Image is saved in the thread's folder based on its hash value.
 	if folderErr := os.Mkdir("public/threadContent/"+ID, os.ModePerm); folderErr != nil {
