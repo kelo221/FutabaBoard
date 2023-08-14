@@ -21,14 +21,13 @@ func main() {
 		Database.Init()
 	}
 
-	app.Static("/", "./public")
-
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
 		AllowOrigins:     "https://127.0.0.1:8000, http://127.0.0.1:8000, http://localhost:8000, http://localhost:5173",
-		AllowHeaders:     "Origin, Content-Type, Accept",
+		AllowHeaders:     "Origin, Content-Type, Accept, Access-Control-Allow-Origin",
 	}))
 
+	app.Static("/", "./public")
 	Routes.Setup(app)
 
 	err := app.Listen(":8000")

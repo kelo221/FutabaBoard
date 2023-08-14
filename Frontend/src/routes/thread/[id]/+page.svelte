@@ -18,7 +18,6 @@
         throw new Error("Failed to fetch data");
       }
       threads = await response.json()
-      console.log(threads);
     } catch (error) {
       console.error(error);
       notFoundError = true

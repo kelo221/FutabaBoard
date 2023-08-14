@@ -24,30 +24,29 @@
 	import {localStorageStore} from "@skeletonlabs/skeleton"; //Backup data
 	import type { Writable } from "svelte/store";
 	import type { UserPrefences } from "../app";
-	import { onMount } from "svelte";								//Write data
+	import { onMount } from "svelte";
 
 	const userSettings : Writable<UserPrefences> = localStorageStore("userPrefs", {});
-
-	//document.getElementById("themeHooker").setAttribute('data-theme', $userSettings.Theme);
 
 	onMount(async function () {
 		document.getElementById("themeHooker").setAttribute('data-theme', $userSettings.Theme);
 	});
 
-
 </script>
 
 <AppShell>
-	<svelte:fragment slot="header">
-		<AppBar class="hidden lg:block">
+	<svelte:fragment slot="pageHeader">
+		<AppBar>
 			<svelte:fragment slot="lead">
 				<strong class="text-xl uppercase">Hesat</strong>
 			</svelte:fragment>
+
 			<svelte:fragment slot="trail">
+				<strong class="text-xl uppercase">THREAD INFO HERE</strong>
 				<a href={`rules`}>
 				<Icon icon="ooui:article-ltr" />
 				</a>
-				<a href={`contact`}>
+				<a href={`forms`}>
 				<Icon icon="ooui:message" />
 				</a>
 				<a href={`settings`}>

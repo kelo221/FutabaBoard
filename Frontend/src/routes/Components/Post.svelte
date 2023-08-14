@@ -1,4 +1,6 @@
 <script lang="ts">
+    import ExtraFlags from "./ExtraFlags.svelte";
+
     export let postType; // Pass 'thread' or 'post' as a prop
     export let content;
     import Icon from "@iconify/svelte";
@@ -80,9 +82,9 @@
                 {#if postType === 'thread'}
                 <div class="grid">
                     <b style={'color: #' + content.Hash}>{content.Name}</b>
-                    <div class="flex space-x-1">
+                    <div class="flex space-x-1 justify-center items-center">
                         <i class={'flag ' + content.Country}></i>
-                        <img src={`http://${window.location.hostname}:8000/Flags/Regional/${content.ExtraFlags}.png`}/>
+                        <ExtraFlags Flags={content.ExtraFlags}/>
                     </div>
                 </div>
 
@@ -98,9 +100,9 @@
                 {:else}
                     <div class="grid">
                         <b style={'color: #' + content.Hash}>{content.Name}</b>
-                        <div class="flex space-x-1">
+                        <div class="flex space-x-1 justify-center items-center">
                             <i class={'flag ' + content.Country}></i>
-                            <img src={`http://${window.location.hostname}:8000/Flags/Regional/${content.ExtraFlags}.png`}/>
+                            <ExtraFlags Flags={content.ExtraFlags}/>
                         </div>
                     </div>
                     <p>#{content.ID}</p>
@@ -112,11 +114,9 @@
 
             <div class="grid">
                 <b style={'color: #' + content.Hash}>{content.Name}</b>
-                <div class="flex space-x-1">
+                <div class="flex space-x-1 justify-center items-center">
                     <i class={'flag ' + content.Country}></i>
-                    {#if content.ExtraFlags !== ""}
-                    <img src={`http://${window.location.hostname}:8000/Flags/Regional/${content.ExtraFlags}.png`}/>
-                    {/if}
+                    <ExtraFlags Flags={content.ExtraFlags}/>
                 </div>
             </div>
             <p>#{content.ID}</p>
