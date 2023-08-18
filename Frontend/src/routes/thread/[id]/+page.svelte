@@ -3,12 +3,15 @@
   import type { Thread } from "../../../dataFormats/Thread";
   import Post from "../../Components/Post.svelte";
 
+
   /** @type {import('./$types').PageData} */
   export let data;
 
   let notFoundError = false
 
-  let threads: Thread;
+
+
+  import {currentThreadStore } from "../../../stores"
 
   onMount(async function () {
     try {
@@ -17,18 +20,20 @@
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-      threads = await response.json()
+      $currentThreadStore = await response.json()
     } catch (error) {
       console.error(error);
       notFoundError = true
     }
   })
+
+
+
 </script>
 
 <style>
     @import '../../../country-flags/flags.css';
 </style>
-
 
 
 {#if (notFoundError)}
@@ -40,14 +45,15 @@
   </div>
 {/if}
 
-{#if (threads)}
+{#if ($currentThreadStore)}
+
   <main class="m-3">
     <div class="container">
       <div class="flex-1 space-y-3">
-        <Post postType="thread" content={threads} threadID={threads.ID} isOpen={true}/>
+        <Post postType="thread" content={$currentThreadStore} threadID={$currentThreadStore.ID} isOpen={true}/>
           <div class="w-full grid grid-cols-1 md:grid-cols-1 gap-2">
-            {#each threads.Posts as post, index}
-              <Post postType="post" content={post} threadID={threads.ID}/>
+            {#each $currentThreadStore.Posts as post}
+              <Post postType="post" content={post} threadID={$currentThreadStore.ID} isOpen={true}/>
             {/each}
           </div>
       </div>

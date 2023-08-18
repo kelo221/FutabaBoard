@@ -20,6 +20,6 @@
 
 {#if Flags !== ""}
   {#each flagSplitter(Flags) as flag}
-  <img src={`http://${window.location.hostname}:8000/Flags/Regional/${flag}.png`}/>
+  <img alt={flag} src={`http://${window.location.hostname}:8000/Flags/Regional/${flag}.png`}/>
     {/each}
 {/if}

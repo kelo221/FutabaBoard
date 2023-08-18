@@ -23,7 +23,7 @@
     let currentPage = 0;
 
     async function handleCountUpdated(event) {
-        currentPage = event.detail; // Update the parent's count based on the event payload
+        currentPage = event.detail;
 
         try {
             const endpoint = `http://${window.location.hostname}:8000/api/page/${currentPage}`;
@@ -32,8 +32,8 @@
                 throw new Error("Failed to fetch data");
             }
             const tempData = await response.json();
-            threadPreviews.length = 0; // Clear the array
-            threadPreviews.push(...tempData); // Push new data into the existing array
+            threadPreviews.length = 0;
+            threadPreviews.push(...tempData);
         } catch (error) {
             console.error(error);
         }
@@ -63,7 +63,7 @@
                 <Post postType="thread" content={thread} threadID={thread.ID} isOpen={false}/>
                 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
                     {#each thread.Posts as post}
-                        <Post postType="post" content={post} threadID={threadPreviews[0].ID} isOpen={false}/>
+                        <Post postType="post" content={post} threadID={post.ParentThread} isOpen={false}/>
                     {/each}
                 </div>
                 {#if index < threadPreviews.length - 1}

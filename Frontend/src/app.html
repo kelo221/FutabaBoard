@@ -5,6 +5,14 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		%sveltekit.head%
+
+		<link
+			rel="preload"
+			href="%sveltekit.assets%/fonts/Manrope-VariableFont_wght.ttf"
+			as="font"
+			type="font/ttf"
+			crossorigin
+		/>
 	</head>
 	<body data-sveltekit-preload-data="hover" data-theme="crimson" id="themeHooker">
 		<div style="display: contents" class="h-full overflow-hidden">%sveltekit.body%</div>

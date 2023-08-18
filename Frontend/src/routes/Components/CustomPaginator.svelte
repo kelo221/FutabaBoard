@@ -1,8 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { createEventDispatcher } from 'svelte';
-
-  // Create an event dispatcher
+  import { createEventDispatcher, onMount } from "svelte";
   const dispatch = createEventDispatcher();
 
   export let currentPage;
@@ -15,20 +12,18 @@
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-      const tempData = await response.json();
-      totalPages = tempData
-      console.log(totalPages);
+      totalPages = await response.json()
     } catch (error) {
       console.error(error);
     }
   });
 
-  function gotoPage(page) {
+  const gotoPage = page => {
     if (page !== currentPage) {
-      dispatch("countUpdated", page); // Emit an event with updated count
+      dispatch("countUpdated", page);
       currentPage = page;
     }
-  }
+  };
 
 </script>
 

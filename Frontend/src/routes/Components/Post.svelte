@@ -1,12 +1,12 @@
 <script lang="ts">
     import ExtraFlags from "./ExtraFlags.svelte";
-
     export let postType; // Pass 'thread' or 'post' as a prop
     export let content;
     import Icon from "@iconify/svelte";
 
     export let threadID
     export let isOpen
+
 
     let isMobile = false;
 
@@ -33,9 +33,24 @@
 
     let enlargedImage = null;
 
-    function handleImageClick(imageHash) {
+    const handleImageClick = imageHash => {
         enlargedImage = enlargedImage === imageHash ? null : imageHash;
+    };
+
+
+
+    import { replyBoxStore } from '../../stores'
+
+    const openReply = (threadID :number, postType :string, targetPost :string) => {
+        $replyBoxStore.threadID = threadID
+        $replyBoxStore.open = true
+
+        if (postType === "post") {
+            $replyBoxStore.content =  $replyBoxStore.content + ">>" +targetPost+ "\n"
+        }
+
     }
+
 
 </script>
 
@@ -43,7 +58,7 @@
     <div class="container flex flex-col items-center justify-center m-2">
 
     {#if postType === 'thread'}
-        <h1 class="h3">  {content.Topic}</h1>
+        <h1 style="font-size: x-large">{content.Topic}</h1>
     {/if}
     </div>
     <div class="flex" style="text-align: left; flex-grow: 1;">
@@ -79,14 +94,17 @@
         <div class="flex-auto flex justify-between items-center">
 
             {#if isMobile}
+
                 {#if postType === 'thread'}
-                <div class="grid">
-                    <b style={'color: #' + content.Hash}>{content.Name}</b>
-                    <div class="flex space-x-1 justify-center items-center">
-                        <i class={'flag ' + content.Country}></i>
-                        <ExtraFlags Flags={content.ExtraFlags}/>
+                    <div class="grid">
+                        <div class="flex justify-center">
+                            <b style={'color: #' + content.UserHash}>{content.Name}</b>
+                        </div>
+                        <div class="flex space-x-1 justify-center items-center">
+                            <i class={'flag ' + content.Country}></i>
+                            <ExtraFlags Flags={content.ExtraFlags}/>
+                        </div>
                     </div>
-                </div>
 
                 <div class="grid">
                     <p>#{content.ID}</p>
@@ -94,12 +112,13 @@
                 </div>
                     <div class="grid">
                         <p>{parseDateStringToDate(content.UnixTime)}</p>
-                        <p style={'color: #' + content.UserHash}>
+                        <p style={'color: #' + content.UserHash} >
                             {"#" + content.UserHash} </p>
+
                     </div>
                 {:else}
                     <div class="grid">
-                        <b style={'color: #' + content.Hash}>{content.Name}</b>
+                        <b style={'color: #' + content.UserHash}>{content.Name}</b>
                         <div class="flex space-x-1 justify-center items-center">
                             <i class={'flag ' + content.Country}></i>
                             <ExtraFlags Flags={content.ExtraFlags}/>
@@ -110,21 +129,26 @@
                     <p style={'color: #' + content.UserHash}>
                         {"#" + content.UserHash} </p>
                 {/if}
+
             {:else}
 
-            <div class="grid">
-                <b style={'color: #' + content.Hash}>{content.Name}</b>
-                <div class="flex space-x-1 justify-center items-center">
-                    <i class={'flag ' + content.Country}></i>
-                    <ExtraFlags Flags={content.ExtraFlags}/>
+                <div class="grid">
+                    <div class="flex justify-center">
+                        <b style={'color: #' + content.UserHash}>{content.Name}</b>
+                    </div>
+                    <div class="flex space-x-1 justify-center items-center">
+                        <i class={'flag ' + content.Country}></i>
+                        <ExtraFlags Flags={content.ExtraFlags}/>
+                    </div>
                 </div>
-            </div>
-            <p>#{content.ID}</p>
+
+                <p style="color: blue; text-decoration: underline; cursor: pointer;"  on:click={() => openReply(threadID, postType, content.ID) }>#{content.ID}</p>
             <p>{postType === 'thread' ? content.PostCount + ' Posts' : ''}</p>
             <p>{parseDateStringToDate(content.UnixTime)}</p>
             <p style={'color: #' + content.UserHash}>
                 {"#" + content.UserHash}
             </p>
+
             {/if}
 
         </div>

@@ -69,6 +69,7 @@ func stripHTMLTags(input string) string {
 	}
 }
 
+// TODO prevent Quote tag abuse, only add styling when line is one word
 func formatPostText(text string) string {
 	lines := strings.Split(text, "\n")
 	var result strings.Builder
@@ -76,7 +77,12 @@ func formatPostText(text string) string {
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line != "" {
-			if strings.HasPrefix(line, ">") {
+			if len(lines) > 1 && line[0] == '>' && line[1] == '>' {
+				result.WriteString("<a href=\"#")
+				result.WriteString(line[2:] + "\"class=quotelink" + ">")
+				result.WriteString(line)
+				result.WriteString("</a>\n")
+			} else if strings.HasPrefix(line, ">") {
 				result.WriteString("<p style=\"color: green;\">")
 				result.WriteString("&gt;" + line[1:])
 				result.WriteString("</p>\n")

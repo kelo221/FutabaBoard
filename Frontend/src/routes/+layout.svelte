@@ -4,6 +4,11 @@
 	// If you have source.organizeImports set to true in VSCode, then it will auto change this ordering
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
 
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+
+	import { storePopup } from "@skeletonlabs/skeleton";
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+
 
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
@@ -25,6 +30,7 @@
 	import type { Writable } from "svelte/store";
 	import type { UserPrefences } from "../app";
 	import { onMount } from "svelte";
+	import ReplyBox from "./Components/ReplyBox.svelte";
 
 	const userSettings : Writable<UserPrefences> = localStorageStore("userPrefs", {});
 
@@ -32,7 +38,10 @@
 		document.getElementById("themeHooker").setAttribute('data-theme', $userSettings.Theme);
 	});
 
+	import { replyBoxStore, currentThreadStore } from "../stores"
+
 </script>
+
 
 <AppShell>
 	<svelte:fragment slot="pageHeader">
@@ -42,18 +51,33 @@
 			</svelte:fragment>
 
 			<svelte:fragment slot="trail">
-				<strong class="text-xl uppercase">THREAD INFO HERE</strong>
-				<a href={`rules`}>
+				{#if ($currentThreadStore !== undefined)}
+				<strong class="text-xl ">
+					{$currentThreadStore.PostCount} Posts
+				</strong>
+
+					<strong class="text-xl">
+						/
+					</strong>
+
+					<strong class="text-xl">
+						Page {$currentThreadStore.Page}
+					</strong>
+
+					{/if}
+
+				<a href={`/rules`}>
 				<Icon icon="ooui:article-ltr" />
 				</a>
-				<a href={`forms`}>
+				<a href={`/forms`}>
 				<Icon icon="ooui:message" />
 				</a>
-				<a href={`settings`}>
+				<a href={`/settings`}>
 				<Icon icon="ooui:settings" />
 				</a>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 	<slot />
+	<ReplyBox/>
 </AppShell>
