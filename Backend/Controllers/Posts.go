@@ -434,6 +434,16 @@ func FetchThread(c *fiber.Ctx) error {
 				return fiber.NewError(fiber.StatusNotFound, "No threads with ID "+threadIDString)
 			}
 
+			if OP.UserInfo.IpAddress == c.IP() {
+				OP.UserInfo.You = true
+			}
+
+			for index, post := range collection {
+				if post.IpAddress == c.IP() {
+					collection[index].UserInfo.You = true
+				}
+			}
+
 			fullThread := DataModels.ThreadPreview{
 				SharedID:   OP.SharedID,
 				UnixTime:   OP.UnixTime,

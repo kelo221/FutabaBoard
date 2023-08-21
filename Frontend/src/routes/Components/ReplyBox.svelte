@@ -7,6 +7,8 @@
     $replyBoxStore.content = ""
   }
 
+  let threadTopic = ""
+
   onMount(() => {
       const dragBar = document.getElementById("dragBar");
       const replyBox = document.querySelector(".replyBox");
@@ -43,6 +45,10 @@
         window.removeEventListener("mouseup", handleDragEnd);
       };
   });
+  const sendData = () => {
+
+  };
+
 </script>
 
 <style>
@@ -68,12 +74,22 @@
 <div class="card floating-element replyBox" style="border: 4px outset rgba(var(--color-secondary-900) / 1);" class:hidden="{$replyBoxStore.open === false}">
   <div id="dragBar" style="border: 10px outset rgba(var(--color-secondary-300) / 1); height: 10px;"></div>
   <header class="card-header flex">
-    <h4 style="font-size: large">Replying to thread #{$replyBoxStore.threadID}</h4>
+
+    {#if $replyBoxStore.newThread}
+      <h4 style="font-size: large">Creating a new thread</h4>
+    {:else }
+      <h4 style="font-size: large">Replying to thread #{$replyBoxStore.threadID}</h4>
+      {/if}
     <div class="ml-auto" on:click={closeReplyWindow} style="cursor: pointer">
       <Icon class="icon" icon="ooui:close" />
     </div>
   </header>
   <section class="p-4">
+    {#if $replyBoxStore.newThread}
+    <label class="label">
+      <textarea bind:value={threadTopic} class="textarea" rows="1" placeholder="Topic (Required)"></textarea>
+    </label>
+      {/if}
     <label class="label">
       <textarea bind:value={$replyBoxStore.content} class="textarea" rows="4"></textarea>
     </label>
@@ -84,5 +100,5 @@
   <footer class="card-footer">
     <input class="input" type="file" />
   </footer>
-  <button type="button" class="btn variant-filled m-2">Reply</button>
+  <button type="button" class="btn variant-filled m-2" on:click={()=> sendData()}>Reply</button>
 </div>

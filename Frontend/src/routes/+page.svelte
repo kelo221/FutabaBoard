@@ -3,6 +3,7 @@
     import Post from "./Components/Post.svelte";
     import CustomPaginator from './Components/CustomPaginator.svelte';
     import type { Thread } from "../app";
+    import { replyBoxStore } from "../stores";
 
     const threadPreviews: Thread[] = [];
 
@@ -19,12 +20,12 @@
         } catch (error) {
             console.error(error);
         }
+
     });
     let currentPage = 0;
 
     async function handleCountUpdated(event) {
         currentPage = event.detail;
-
         try {
             const endpoint = `http://${window.location.hostname}:8000/api/page/${currentPage}`;
             const response = await fetch(endpoint);
@@ -37,8 +38,14 @@
         } catch (error) {
             console.error(error);
         }
-
     }
+
+    const handleNewThread = () => {
+        $replyBoxStore.open = true
+    };
+
+    $replyBoxStore.newThread = true
+
 
 </script>
 
@@ -57,13 +64,19 @@
 
 
 <main class="m-3">
+    <div class="container h-full mx-auto m-2 flex justify-center items-center">
+        <button class="btn variant-filled" type="button" on:click={() => handleNewThread()}>
+            New Thread
+        </button>
+    </div>
     <div class="container">
         <div class="flex-1 space-y-3">
+
             {#each threadPreviews as thread, index}
-                <Post postType="thread" content={thread} threadID={thread.ID} isOpen={false}/>
+                <Post content={thread} threadID={thread.ID} isOpen={false}/>
                 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
                     {#each thread.Posts as post}
-                        <Post postType="post" content={post} threadID={post.ParentThread} isOpen={false}/>
+                        <Post content={post} threadID={post.ParentThread} isOpen={false}/>
                     {/each}
                 </div>
                 {#if index < threadPreviews.length - 1}

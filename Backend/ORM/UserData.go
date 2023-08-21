@@ -7,6 +7,7 @@ import (
 type UserInfo struct {
 	IpAddress string `json:"-"`
 	UserHash  string `json:"UserHash"`
+	You       bool   `json:"You"`
 }
 
 type ImagePrivilege struct {

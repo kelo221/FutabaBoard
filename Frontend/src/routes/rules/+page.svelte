@@ -3,7 +3,7 @@
   <div class="container h-full mx-auto mt-4 flex justify-center items-center">
     <div class="space-y-5 text-center flex flex-col items-center">
       <div class="card p-4 flex flex-col items-center">
-        <h1 class="h1">Rules</h1>
+        <h1 style="font-size: x-large">Rules</h1>
         <div class="text-left space-y-3">
           <p>You must follow these rules while using the site:</p>
           <p>1. Don't share or discuss anything illegal, whether it's against local laws or U.S. laws.</p>

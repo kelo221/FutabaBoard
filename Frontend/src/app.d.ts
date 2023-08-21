@@ -22,7 +22,8 @@ export interface Thread {
 	PostCount: number;
 	PostImage: PostImage;
 	UserHash: string;
-	Post: Post[];
+	You: boolean;
+	Posts: Post[];
 }
 
 export interface PostImage {
@@ -41,6 +42,7 @@ export interface Post {
 	ParentThread: number;
 	PostImage: PostImage2;
 	UserHash: string;
+	You: boolean;
 }
 
 export interface PostImage2 {

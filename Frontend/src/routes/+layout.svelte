@@ -26,21 +26,41 @@
 	import '@skeletonlabs/skeleton/themes/theme-seasonal.css';
 	import '@skeletonlabs/skeleton/themes/theme-vintage.css';
 
-	import {localStorageStore} from "@skeletonlabs/skeleton"; //Backup data
-	import type { Writable } from "svelte/store";
-	import type { UserPrefences } from "../app";
 	import { onMount } from "svelte";
 	import ReplyBox from "./Components/ReplyBox.svelte";
+	import { currentThreadStore, postPreview, userSettings } from "../stores";
 
-	const userSettings : Writable<UserPrefences> = localStorageStore("userPrefs", {});
+	let mousePos: { x: number; y: number }
 
 	onMount(async function () {
 		document.getElementById("themeHooker").setAttribute('data-theme', $userSettings.Theme);
+		window.addEventListener('mousemove', (event) => {
+			mousePos = { x: event.clientX, y: event.clientY };
+		});
 	});
 
-	import { replyBoxStore, currentThreadStore } from "../stores"
+
+	import Post from "./Components/Post.svelte";
 
 </script>
+
+<style>
+	.floating-element {
+		position: absolute;
+		top: calc( var(--y) * 1px + -280px);
+		left: calc( var(--x) * 1px + -10px );
+		z-index: 1000;
+		user-select: none;
+		width: 300px;
+
+		height: 200px;
+	}
+
+	.hidden{
+		display: none;
+	}
+
+</style>
 
 
 <AppShell>
@@ -52,19 +72,11 @@
 
 			<svelte:fragment slot="trail">
 				{#if ($currentThreadStore !== undefined)}
-				<strong class="text-xl ">
-					{$currentThreadStore.PostCount} Posts
-				</strong>
-
-					<strong class="text-xl">
-						/
-					</strong>
-
-					<strong class="text-xl">
-						Page {$currentThreadStore.Page}
-					</strong>
-
+				<small class="text-xl ">
+					{$currentThreadStore.PostCount} Posts | Page {$currentThreadStore.Page} |
+					</small>
 					{/if}
+
 
 				<a href={`/rules`}>
 				<Icon icon="ooui:article-ltr" />
@@ -78,6 +90,24 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
+
+
 	<slot />
 	<ReplyBox/>
+
+	{#if (mousePos)}
+	<div class="card floating-element" style="border: 4px outset
+	rgba(var(--color-secondary-900) / 1);
+	--x:{mousePos.x}; --y:{mousePos.y}" class:hidden="{$postPreview.open === false}">
+	{#if ($postPreview.open && $currentThreadStore)}
+		<Post content={$postPreview.postData} isOpen="true" threadID={$currentThreadStore.ID}/>
+	{/if}
+		{#if (!$currentThreadStore)}
+			FAULTY
+			{/if}
+	</div>
+	{/if}
+
+
+
 </AppShell>

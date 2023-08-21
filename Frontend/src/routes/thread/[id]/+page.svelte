@@ -1,17 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Thread } from "../../../dataFormats/Thread";
   import Post from "../../Components/Post.svelte";
-
 
   /** @type {import('./$types').PageData} */
   export let data;
-
   let notFoundError = false
+  import { currentThreadStore, replyBoxStore } from "../../../stores";
 
-
-
-  import {currentThreadStore } from "../../../stores"
 
   onMount(async function () {
     try {
@@ -27,7 +22,7 @@
     }
   })
 
-
+  $replyBoxStore.newThread = false
 
 </script>
 
@@ -50,10 +45,10 @@
   <main class="m-3">
     <div class="container">
       <div class="flex-1 space-y-3">
-        <Post postType="thread" content={$currentThreadStore} threadID={$currentThreadStore.ID} isOpen={true}/>
+          <Post content={$currentThreadStore} threadID={$currentThreadStore.ID} isOpen={true}/>
           <div class="w-full grid grid-cols-1 md:grid-cols-1 gap-2">
             {#each $currentThreadStore.Posts as post}
-              <Post postType="post" content={post} threadID={$currentThreadStore.ID} isOpen={true}/>
+                <Post content={post} threadID={post.ParentThread} isOpen={false}/>
             {/each}
           </div>
       </div>
