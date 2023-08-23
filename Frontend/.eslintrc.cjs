@@ -18,12 +18,24 @@ module.exports = {
 		es2017: true,
 		node: true
 	},
+	rules: {
+		'@typescript-eslint/explicit-module-boundary-types': 'error',
+		'@typescript-eslint/no-explicit-any': 'error',
+		'svelte/no-unused-vars': 'error',
+		'svelte/valid-styles': 'error',
+		'no-console': 'error', // Forbid console.log and similar
+		'no-debugger': 'error', // Forbid debugger statements
+		'no-unused-vars': 'error' // Check unused variables in non-Svelte files
+	},
 	overrides: [
 		{
 			files: ['*.svelte'],
 			parser: 'svelte-eslint-parser',
 			parserOptions: {
 				parser: '@typescript-eslint/parser'
+			},
+			rules: {
+				'svelte/no-unused-vars': 'error'
 			}
 		}
 	]

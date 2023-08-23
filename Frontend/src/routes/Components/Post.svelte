@@ -32,7 +32,6 @@
     return content.Text;
   };*/
 
-
 </script>
 
 <div class="card" id={content.ID} style="display: flex; flex-direction: column;">

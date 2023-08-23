@@ -53,7 +53,7 @@
             } else {
               const fetch = await getPostPreview(href);
               if (fetch) {
-                console.log(threadID);
+                console.log(threadID, "isOpen === false");
                 $postPreview.postData = fetch;
                 $postPreview.open = true;
               }

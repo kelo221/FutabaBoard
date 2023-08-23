@@ -15,6 +15,9 @@ interface PostPreview {
 	postData: Post;
 }
 
+const currentPage = 0;
+
+export const currentPageStore = writable(currentPage);
 export const replyBoxStore = writable(replyState);
 export const currentThreadStore: Writable<Thread> = writable();
 export const postPreview: Writable<PostPreview> = writable({ open: false });
