@@ -44,13 +44,10 @@
 <style>
 	.floating-element {
 		position: absolute;
-		top: calc( var(--y) * 1px + -280px);
-		left: calc( var(--x) * 1px + -10px );
+		top: calc( var(--y) * 1px + -200px);
+		left: calc( var(--x) * 1px + 20px );
 		z-index: 1000;
 		user-select: none;
-		width: 300px;
-
-		height: 200px;
 	}
 
 	.hidden{
@@ -96,12 +93,9 @@
 	<div class="card floating-element" style="border: 4px outset
 	rgba(var(--color-secondary-900) / 1);
 	--x:{mousePos.x}; --y:{mousePos.y}" class:hidden="{$postPreview.open === false}">
-	{#if ($postPreview.open && $currentThreadStore)}
-		<Post content={$postPreview.postData} isOpen="true" threadID={$currentThreadStore.ID}/>
+	{#if ($postPreview.open)}
+		<Post content={$postPreview.postData} isOpen={true} threadID={$postPreview.tempThreadID}/>
 	{/if}
-		{#if (!$currentThreadStore)}
-			FAULTY
-			{/if}
 	</div>
 	{/if}
 

@@ -15,7 +15,6 @@ export interface Thread {
 	UnixTime: string;
 	LastBump: string;
 	Name: string;
-	Text: string;
 	Topic: string;
 	Country: string;
 	ExtraFlags: string;
@@ -23,6 +22,7 @@ export interface Thread {
 	Page: number;
 	PostCount: number;
 	PostImage: PostImage;
+	TextRaw: string;
 	UserHash: string;
 	You: boolean;
 	Posts: Post[];
@@ -38,20 +38,15 @@ export interface Post {
 	ID: number;
 	UnixTime: string;
 	Name: string;
-	Text: string;
+	TextRaw: string;
 	Country: string;
 	ExtraFlags: string;
 	ParentThread: number;
-	PostImage: PostImage2;
+	PostImage: PostImage;
 	UserHash: string;
 	You: boolean;
 }
 
-export interface PostImage2 {
-	Filename: string;
-	ImageInfo: string;
-	ImageHash: string;
-}
 export interface UserPrefences {
 	Theme: string;
 	Key: string;

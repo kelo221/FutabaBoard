@@ -1,7 +1,6 @@
 <script lang="ts">
 
   import { currentThreadStore, postPreview } from "../../../stores";
-  import { onMount } from "svelte";
 
   let enlargedImage : boolean
   export let content
@@ -13,11 +12,6 @@
   const handleImageClick = imageHash => {
     enlargedImage = enlargedImage === imageHash ? null : imageHash;
   };
-
-  onMount(async () => {
-    //content.Text = processReplyMatches();
-    attachMouseOver();
-  });
 
 
   const getPostPreview= async (postID: number) => {
@@ -33,49 +27,69 @@
     }
   }
 
-  // TODO, work on replies outside of current thread
-  function attachMouseOver() {
-    const links = document.querySelectorAll("a");
-    links.forEach(link => {
+  const handleMouseIn = async (event) => {
+    if (event.target.getAttribute("href") !== null) {
+      const href = Number(event.target.getAttribute("href").replace(/\D/g, ""));
+      if (Number.isInteger(href)) {
+        if (isOpen) {
+          console.log("local");
+          let foundObjects = $currentThreadStore.Posts.filter(obj => obj.ID === href);
+          $postPreview.open = true;
+          if (foundObjects[0]) {
+            $postPreview.postData = foundObjects[0];
+          } else {
+            $postPreview.postData = $currentThreadStore;
+          }
+        } else {
+          console.log("fetch");
+          console.log(href);
+          const fetch = await getPostPreview(href);
+          if (fetch) {
 
-      link.addEventListener("mouseover", async (event) => {
-        if (event.target.getAttribute("href") !== null) {
-          const href = Number(event.target.getAttribute("href").replace(/\D/g, ""));
-          if (Number.isInteger(href)) {
-            if (isOpen) {
-              let foundObjects = $currentThreadStore.Posts.filter(obj => obj.ID === href);
-              $postPreview.open = true;
-              if (foundObjects[0]) {
-                $postPreview.postData = foundObjects[0];
-              } else {
-                $postPreview.postData = $currentThreadStore;
-              }
-            } else {
-              const fetch = await getPostPreview(href);
-              if (fetch) {
-                console.log(threadID, "isOpen === false");
-                $postPreview.postData = fetch;
-                $postPreview.open = true;
-              }
+            if (content.ParentThread){
+              $postPreview.tempThreadID = content.ParentThread
+            }else {
+              $postPreview.tempThreadID = content.ID
             }
+
+
+            $postPreview.postData = fetch;
+            $postPreview.open = true;
           }
         }
-      });
+      }
+    }
+  }
 
-      link.addEventListener("mouseleave", () => {
-        $postPreview.open = false;
-      });
-
-    });
+  const handleMouseOut= () =>{
+    $postPreview.open = false;
   }
 
 
 </script>
 
+<style>
+    .quote {
+        color: green;
+    }
+    .reply{
+        color: dodgerblue;
+        font-weight: bold;
+    }
+</style>
+
 <div class="flex" style="text-align: left; flex-grow: 1;">
   {#if !enlargedImage}
     <div class="container m-4" style="text-align: left; flex-grow: 1;">
-      {@html content.Text}
+      {#each content.TextRaw.split(/\r?\n/) as text}
+        {#if text.startsWith(">>") && text.slice(2).trim().match(/^\d+$/)}
+          <a class="reply" href={"#"+text.slice(2).trim()} on:mouseenter={handleMouseIn} on:mouseleave={handleMouseOut}  >{text}</a>
+        {:else if text.startsWith(">")}
+          <p class="quote">{text}</p>
+        {:else}
+          <p>{text}</p>
+        {/if}
+      {/each}
     </div>
   {/if}
 

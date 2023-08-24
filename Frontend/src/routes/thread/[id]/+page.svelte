@@ -19,7 +19,7 @@
           <Post content={$currentThreadStore} threadID={$currentThreadStore.ID} isOpen={true}/>
           <div class="w-full grid grid-cols-1 md:grid-cols-1 gap-2">
             {#each $currentThreadStore.Posts as post}
-                <Post content={post} threadID={post.ParentThread} isOpen={false}/>
+                <Post content={post} threadID={post.ParentThread} isOpen={true}/>
             {/each}
           </div>
       </div>

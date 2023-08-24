@@ -6,7 +6,7 @@ import Icon from "@iconify/svelte";
 
 export let content
 export let threadID
-export let isOpen :boolean
+export let isOpen
 
 
 function parseDateStringToDate(datetimeString: string): string {
@@ -46,6 +46,7 @@ onMount(async function () {
 });
 
 let isMobile = false;
+
 
 </script>
 

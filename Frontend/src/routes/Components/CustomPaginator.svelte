@@ -1,22 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher} from "svelte";
   const dispatch = createEventDispatcher();
 
   export let currentPage;
-  let totalPages = 0; // Total number of pages in your content
+  export let totalPages;
 
-  onMount(async function () {
-    try {
-      const endpoint = `http://${window.location.hostname}:8000/api/pageCount`;
-      const response = await fetch(endpoint);
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      totalPages = await response.json()
-    } catch (error) {
-      console.error(error);
-    }
-  });
 
   const gotoPage = page => {
     if (page !== currentPage) {
@@ -28,8 +16,6 @@
 </script>
 
 <style>
-
-
     button:hover {
         background-color: #ada5a5;
     }

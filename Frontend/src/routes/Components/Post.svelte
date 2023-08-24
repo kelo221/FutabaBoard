@@ -8,30 +8,6 @@
 
 
 
-  /*const processReplyMatches = () => {
-    const pattern = /href="#(\d+)"/;
-    const matches = content.Text.match(pattern);
-
-    if (matches) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(content.Text, "text/html");
-
-      const aTags = doc.querySelectorAll("a");
-      aTags.forEach((aTag) => {
-          aTag.setAttribute("on:mouseenter", `{()=>
-            console.log("enter")}
-          `
-          );
-      });
-
-      content.Text = doc.body.innerHTML;
-    } else {
-      console.log("No number found.");
-    }
-
-    return content.Text;
-  };*/
-
 </script>
 
 <div class="card" id={content.ID} style="display: flex; flex-direction: column;">

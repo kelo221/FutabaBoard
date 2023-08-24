@@ -13,6 +13,7 @@ const replyState = {
 interface PostPreview {
 	open: boolean;
 	postData: Post;
+	tempThreadID: number;
 }
 
 const currentPage = 0;
@@ -20,7 +21,7 @@ const currentPage = 0;
 export const currentPageStore = writable(currentPage);
 export const replyBoxStore = writable(replyState);
 export const currentThreadStore: Writable<Thread> = writable();
-export const postPreview: Writable<PostPreview> = writable({ open: false });
+export const postPreview: Writable<PostPreview> = writable({ open: false, tempThreadID: 0 });
 export const userSettings: Writable<UserPrefences> = localStorageStore('userPrefs', {
 	Theme: 'modern',
 	Key: '',

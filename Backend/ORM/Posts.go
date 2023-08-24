@@ -16,7 +16,7 @@ type Thread struct {
 	UnixTime   time.Time `json:"UnixTime" gorm:"autoCreateTime"`
 	LastBump   time.Time `json:"LastBump" gorm:"autoCreateTime"`
 	Name       string    `json:"Name"`
-	Text       string    `json:"Text"`
+	TextRaw    string    `json:"TextRaw"`
 	Topic      string    `json:"Topic"`
 	Country    string    `json:"Country"`
 	ExtraFlags string    `json:"ExtraFlags"`
@@ -33,7 +33,6 @@ type ThreadPreview struct {
 	UnixTime   time.Time `json:"UnixTime" gorm:"autoCreateTime"`
 	LastBump   time.Time `json:"LastBump" gorm:"autoCreateTime"`
 	Name       string    `json:"Name"`
-	Text       string    `json:"Text"`
 	Topic      string    `json:"Topic"`
 	Country    string    `json:"Country"`
 	ExtraFlags string    `json:"ExtraFlags"`
@@ -41,6 +40,7 @@ type ThreadPreview struct {
 	Page       int       `json:"Page"`
 	PostCount  int       `json:"PostCount"`
 	PostImage  PostImage `json:"PostImage,omitempty" gorm:"embedded"`
+	TextRaw    string    `json:"TextRaw"`
 	UserInfo
 	Posts []Post
 }
@@ -49,7 +49,7 @@ type Post struct {
 	SharedID
 	UnixTime     time.Time `json:"UnixTime" gorm:"autoCreateTime"`
 	Name         string    `json:"Name"`
-	Text         string    `json:"Text"`
+	TextRaw      string    `json:"TextRaw,omitempty"`
 	Country      string    `json:"Country"`
 	ExtraFlags   string    `json:"ExtraFlags"`
 	ParentThread int64     `json:"ParentThread"`

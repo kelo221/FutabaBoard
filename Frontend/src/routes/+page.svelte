@@ -68,6 +68,6 @@
         </div>
     </div>
     <div class="container h-full mx-auto mt-4 flex justify-center items-center">
-     <CustomPaginator currentPage={$currentPageStore} on:countUpdated={handleCountUpdated} />
+     <CustomPaginator currentPage={$currentPageStore} on:countUpdated={handleCountUpdated} totalPages={data.pageCount}/>
     </div>
 </main>

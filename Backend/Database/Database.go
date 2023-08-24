@@ -29,35 +29,35 @@ func Init() {
 		return
 	}
 
-	/*	db.Create(&DataModels.Thread{
-			Name:  "Anon 2",
-			Text:  "Hello I'm OP 2",
-			Flags: "US",
-		})
+	/*db.Create(&DataModels.Thread{
+		Name:  "Anon 2",
+		Text:  "Hello I'm OP 2",
+		Flags: "US",
+	})
 
-		db.Create(&DataModels.Thread{
-			Name:  "Anon",
-			Text:  "Hello I'm OP",
-			Flags: "US",
-		})
+	db.Create(&DataModels.Thread{
+		Name:  "Anon",
+		Text:  "Hello I'm OP",
+		Flags: "US",
+	})
 
-		db.Create(&DataModels.Post{
-			UnixTime:     time.Now(),
-			Name:         "Anon",
-			Text:         "Hello World1",
-			Flags:        "FI",
-			ParentThread: 1,
-			PostImage:    DataModels.PostImage{},
-		})
+	db.Create(&DataModels.Post{
+		UnixTime:     time.Now(),
+		Name:         "Anon",
+		Text:         "Hello World1",
+		Flags:        "FI",
+		ParentThread: 1,
+		PostImage:    DataModels.PostImage{},
+	})
 
-		db.Create(&DataModels.Post{
-			UnixTime:     time.Now(),
-			Name:         "Anon",
-			Text:         "Hello World2",
-			Flags:        "US",
-			ParentThread: 1,
-			PostImage:    DataModels.PostImage{},
-		})*/
+	db.Create(&DataModels.Post{
+		UnixTime:     time.Now(),
+		Name:         "Anon",
+		Text:         "Hello World2",
+		Flags:        "US",
+		ParentThread: 1,
+		PostImage:    DataModels.PostImage{},
+	})*/
 
 }
 

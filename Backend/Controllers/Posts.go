@@ -7,12 +7,10 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
-	"golang.org/x/net/html"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -53,54 +51,28 @@ func FetchPageCount(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(maxPageCount.Page)
 }
 
-func stripHTMLTags(input string) string {
-	reader := strings.NewReader(input)
-	tokenizer := html.NewTokenizer(reader)
-	var result strings.Builder
+/*
+	func formatPostText(text string) DataModels.TextContent {
+		lines := strings.Split(text, "\n")
 
-	for {
-		tokenType := tokenizer.Next()
-		switch tokenType {
-		case html.ErrorToken:
-			return result.String()
-		case html.TextToken:
-			result.WriteString(tokenizer.Token().Data)
-		}
-	}
-}
+		var parsedData DataModels.TextContent
 
-// TODO prevent Quote tag abuse, only add styling when line is one word
-func formatPostText(text string) string {
-	lines := strings.Split(text, "\n")
-	var result strings.Builder
-
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line != "" {
-			if len(lines) > 1 && line[0] == '>' && line[1] == '>' {
-				result.WriteString("<a href=\"#")
-				result.WriteString(line[2:] + "\"class=quotelink" + ">")
-				result.WriteString(line)
-				result.WriteString("</a>\n")
-			} else if strings.HasPrefix(line, ">") {
-				result.WriteString("<p style=\"color: green;\">")
-				result.WriteString("&gt;" + line[1:])
-				result.WriteString("</p>\n")
-			} else if strings.HasPrefix(line, "<") {
-				result.WriteString("<p style=\"color: red;\">")
-				result.WriteString("&lt;" + line[1:])
-				result.WriteString("</p>\n")
-			} else {
-				result.WriteString("<p>")
-				result.WriteString(line)
-				result.WriteString("</p>\n")
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line != "" {
+				if len(lines) > 1 && line[0] == '>' && line[1] == '>' {
+					parsedData.Replies += line + "\n"
+				} else if strings.HasPrefix(line, ">") {
+					parsedData.Quotes += line + "\n"
+				} else {
+					parsedData.Text += line + "\n"
+				}
 			}
 		}
+
+		return parsedData
 	}
-
-	return result.String()
-}
-
+*/
 func Ban(c *fiber.Ctx) error {
 
 	var newBan DataModels.Bans
@@ -249,12 +221,12 @@ func Thread(c *fiber.Ctx) error {
 				newThread.Name = "Anon"
 			}
 
-			if len(newThread.Text) > 3000 {
+			if len(newThread.TextRaw) > 3000 {
 				return c.Status(http.StatusBadRequest).JSON("Post longer than 3000 characters.")
 			}
 
-			newThread.Text = formatPostText(stripHTMLTags(newThread.Text))
 			var hashErr error
+
 			newThread.UserHash, hashErr = generateHashShort(c.IP(), postSalt+strconv.FormatInt(newThread.ID, 10))
 			if hashErr != nil {
 				return hashErr
@@ -313,11 +285,14 @@ func Post(c *fiber.Ctx) error {
 				newPost.Name = "Anon"
 			}
 
-			if len(newPost.Text) > 3000 {
+			if len(newPost.TextRaw) > 3000 {
 				return c.Status(http.StatusBadRequest).JSON("Post longer than 3000 characters.")
 			}
 
-			newPost.Text = formatPostText(stripHTMLTags(newPost.Text))
+			if newPost.TextRaw == "" {
+				return fiber.NewError(fiber.StatusBadRequest, "No message")
+			}
+
 			var hashErr error
 			newPost.UserHash, hashErr = generateHashShort(c.IP(), postSalt+strconv.FormatInt(newPost.ParentThread, 10))
 			if hashErr != nil {
@@ -398,7 +373,6 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 					UnixTime:   thread.UnixTime,
 					LastBump:   thread.LastBump,
 					Name:       thread.Name,
-					Text:       thread.Text,
 					Topic:      thread.Topic,
 					Country:    thread.Country,
 					ExtraFlags: thread.ExtraFlags,
@@ -408,6 +382,7 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 					PostImage:  thread.PostImage,
 					UserInfo:   thread.UserInfo,
 					Posts:      posts,
+					TextRaw:    thread.TextRaw,
 				})
 			}
 
@@ -449,7 +424,6 @@ func FetchThread(c *fiber.Ctx) error {
 				UnixTime:   OP.UnixTime,
 				LastBump:   OP.LastBump,
 				Name:       OP.Name,
-				Text:       OP.Text,
 				Topic:      OP.Topic,
 				Country:    OP.Country,
 				ExtraFlags: OP.ExtraFlags,
@@ -458,6 +432,7 @@ func FetchThread(c *fiber.Ctx) error {
 				PostImage:  OP.PostImage,
 				UserInfo:   OP.UserInfo,
 				Posts:      collection,
+				TextRaw:    OP.TextRaw,
 			}
 			return c.JSON(fullThread)
 		}

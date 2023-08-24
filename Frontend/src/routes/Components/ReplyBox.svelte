@@ -8,6 +8,7 @@
   }
 
   let threadTopic = ""
+  let name = ""
 
   onMount(() => {
       const dragBar = document.getElementById("dragBar");
@@ -90,6 +91,11 @@
       <textarea bind:value={threadTopic} class="textarea" rows="1" placeholder="Topic (Required)"></textarea>
     </label>
       {/if}
+
+    <label class="label">
+      <textarea bind:value={name} class="textarea" rows="1" placeholder="Anon"></textarea>
+    </label>
+
     <label class="label">
       <textarea bind:value={$replyBoxStore.content} class="textarea" rows="4"></textarea>
     </label>
