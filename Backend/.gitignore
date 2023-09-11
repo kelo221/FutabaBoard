@@ -116,3 +116,5 @@ fabric.properties
 
 *.db
 /.env
+
+/public/ThreadContent/*

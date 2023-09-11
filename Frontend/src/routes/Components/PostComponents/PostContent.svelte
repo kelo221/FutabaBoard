@@ -1,31 +1,32 @@
 <script lang="ts">
 
   import { currentThreadStore, postPreview } from "../../../stores";
+  import { PUBLIC_BACKEND_ADDRESS } from "$env/static/public";
 
-  let enlargedImage : boolean
-  export let content
+  let enlargedImage: boolean;
+  export let content;
 
-  export let threadID
+  export let threadID;
 
-  export let isOpen : boolean
+  export let isOpen: boolean;
 
   const handleImageClick = imageHash => {
     enlargedImage = enlargedImage === imageHash ? null : imageHash;
   };
 
 
-  const getPostPreview= async (postID: number) => {
+  const getPostPreview = async (postID: number) => {
     try {
-      const endpoint = `http://${window.location.hostname}:8000/api/post/${postID}`;
+      const endpoint = `${PUBLIC_BACKEND_ADDRESS}/api/post/${postID}`;
       const response = await fetch(endpoint);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-      return await response.json()
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const handleMouseIn = async (event) => {
     if (event.target.getAttribute("href") !== null) {
@@ -46,10 +47,10 @@
           const fetch = await getPostPreview(href);
           if (fetch) {
 
-            if (content.ParentThread){
-              $postPreview.tempThreadID = content.ParentThread
-            }else {
-              $postPreview.tempThreadID = content.ID
+            if (content.ParentThread) {
+              $postPreview.tempThreadID = content.ParentThread;
+            } else {
+              $postPreview.tempThreadID = content.ID;
             }
 
 
@@ -59,11 +60,11 @@
         }
       }
     }
-  }
+  };
 
-  const handleMouseOut= () =>{
+  const handleMouseOut = () => {
     $postPreview.open = false;
-  }
+  };
 
 
 </script>
@@ -72,7 +73,8 @@
     .quote {
         color: green;
     }
-    .reply{
+
+    .reply {
         color: dodgerblue;
         font-weight: bold;
     }
@@ -83,7 +85,8 @@
     <div class="container m-4" style="text-align: left; flex-grow: 1;">
       {#each content.TextRaw.split(/\r?\n/) as text}
         {#if text.startsWith(">>") && text.slice(2).trim().match(/^\d+$/)}
-          <a class="reply" href={"#"+text.slice(2).trim()} on:mouseenter={handleMouseIn} on:mouseleave={handleMouseOut}  >{text}</a>
+          <a class="reply" href={"#"+text.slice(2).trim()} on:mouseenter={handleMouseIn}
+             on:mouseleave={handleMouseOut}>{text}</a>
         {:else if text.startsWith(">")}
           <p class="quote">{text}</p>
         {:else}

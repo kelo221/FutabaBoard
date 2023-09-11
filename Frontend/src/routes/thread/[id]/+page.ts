@@ -1,8 +1,10 @@
-/** @type {import('./$types').PageLoad} */
-/** @type {import('$sveltekit/kit').PageLoad} */
+/** @type {import("./$types").PageLoad} */
+import { PUBLIC_BACKEND_ADDRESS } from "$env/static/public";
+
+/** @type {import("$sveltekit/kit").PageLoad} */
 export async function load({ params, fetch }) {
 	try {
-		const endpoint = `http://127.0.0.1:8000/api/thread/${params.id}`;
+		const endpoint = `${PUBLIC_BACKEND_ADDRESS}/api/thread/${params.id}`;
 		const response = await fetch(endpoint);
 		if (!response.ok) {
 			throw new Error('Not found');
