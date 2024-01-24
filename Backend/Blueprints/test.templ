@@ -1,0 +1,69 @@
+package Blueprints
+import (
+DataModels "backend/ORM"
+)
+templ pageBase() {
+}
+templ Thread(thread []DataModels.ThreadPreview) {
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <title>Bootstrap demo</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"/>
+   </head>
+
+    <style>
+       .post {
+         max-width: 600px;
+         margin: 10px;
+       }
+
+       .op {
+         margin: 10px;
+       }
+
+
+       .op-img {
+         max-height: 300px;
+         object-fit: contain;
+       }
+     </style>
+
+   <body>
+      for _, content := range thread {
+      <div class="container text-center">
+         <div>
+            <div class="card-body">
+               <div class="card op">
+                  <img class="op-img" src="https://getbootstrap.com/docs/5.3/examples/heroes/bootstrap-docs.png" alt="Card image cap" />
+                  <div class="card-body">
+                     <h5 class="card-title">{content.TextRaw}</h5>
+                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                  </div>
+                  <div class="card-footer bg-light"> USER INFO HERE </div>
+               </div>
+            </div>
+            <div class="container text-center">
+               <div class="row row-cols-3">
+                  for _, post := range content.Posts {
+                  <div class="card-body" >
+                     <div class="card post" >
+                        <div class="card-body">
+                           <h5 class="card-title">{post.TextRaw}</h5>
+                           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                        <div class="card-footer bg-light"> USER INFO HERE </div>
+                     </div>
+                  </div>
+                  }
+               </div>
+            </div>
+         </div>
+      </div>
+      }
+   </body>
+</html>
+}

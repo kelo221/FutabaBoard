@@ -5,8 +5,8 @@ import (
 	DataModels "backend/ORM"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -41,7 +41,7 @@ func checkImagePrivilege(hash string) bool {
 	return true
 }
 
-func FetchPageCount(c *fiber.Ctx) error {
+func FetchPageCount(c fiber.Ctx) error {
 
 	var maxPageCount DataModels.Thread
 	if err := db.GetDB().Order("page desc").Limit(1).Find(&maxPageCount).Error; err != nil {
@@ -52,7 +52,7 @@ func FetchPageCount(c *fiber.Ctx) error {
 }
 
 /*
-	func formatPostText(text string) DataModels.TextContent {
+func formatPostText(text string) DataModels.TextContent {
 		lines := strings.Split(text, "\n")
 
 		var parsedData DataModels.TextContent
@@ -71,9 +71,9 @@ func FetchPageCount(c *fiber.Ctx) error {
 		}
 
 		return parsedData
-	}
-*/
-func Ban(c *fiber.Ctx) error {
+}*/
+
+func Ban(c fiber.Ctx) error {
 
 	var newBan DataModels.Bans
 	if err := json.Unmarshal(c.Body(), &newBan); err != nil {
@@ -166,7 +166,7 @@ func deletePostHelper(postID int64) error {
 	return nil
 }
 
-func DeletePost(c *fiber.Ctx) error {
+func DeletePost(c fiber.Ctx) error {
 	postIDParse := c.Params("*")
 	if postID, err := strconv.ParseInt(postIDParse, 10, 64); err != nil {
 		return err
@@ -180,7 +180,7 @@ func DeletePost(c *fiber.Ctx) error {
 }
 
 // Thread TODO Do not allow regular users to sticky
-func Thread(c *fiber.Ctx) error {
+func Thread(c fiber.Ctx) error {
 
 	banCheck, banExpires := isUserBanned(c.IP())
 	if banCheck {
@@ -265,7 +265,7 @@ func Thread(c *fiber.Ctx) error {
 }
 
 // Post Creates a new post.
-func Post(c *fiber.Ctx) error {
+func Post(c fiber.Ctx) error {
 
 	banCheck, banExpires := isUserBanned(c.IP())
 	if banCheck {
@@ -347,7 +347,7 @@ func Post(c *fiber.Ctx) error {
 
 }
 
-func FetchThreadPreviews(c *fiber.Ctx) error {
+func FetchThreadPreviews(c fiber.Ctx) error {
 	pageParse := c.Params("*")
 
 	if threadID, err := strconv.ParseInt(pageParse, 10, 64); err != nil {
@@ -392,7 +392,7 @@ func FetchThreadPreviews(c *fiber.Ctx) error {
 }
 
 // FetchThread Returns a whole thread, input thread ID.
-func FetchThread(c *fiber.Ctx) error {
+func FetchThread(c fiber.Ctx) error {
 	threadIDString := c.Params("*")
 
 	if threadID, err := strconv.ParseInt(threadIDString, 10, 64); err != nil {
@@ -440,7 +440,7 @@ func FetchThread(c *fiber.Ctx) error {
 }
 
 // FetchPost Returns a single post, used for seeing posts from a thread preview.
-func FetchPost(c *fiber.Ctx) error {
+func FetchPost(c fiber.Ctx) error {
 	threadIDString := c.Params("*")
 	if threadID, err := strconv.ParseInt(threadIDString, 10, 64); err != nil {
 		return err

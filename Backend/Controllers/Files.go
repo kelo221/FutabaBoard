@@ -6,8 +6,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/zeebo/blake3"
 	"image"
 	"image/png"
@@ -107,7 +107,7 @@ func GenThumbnail(file *multipart.FileHeader, id, imageHash string) error {
 	return nil
 }
 
-func PostImage(c *fiber.Ctx, imageHash string, parentThreadID string, file *multipart.FileHeader) error {
+func PostImage(c fiber.Ctx, imageHash string, parentThreadID string, file *multipart.FileHeader) error {
 
 	extension := filepath.Ext(file.Filename)
 	fileErr := c.SaveFile(file, filepath.Join("public/threadContent/"+parentThreadID, imageHash+extension))
@@ -123,7 +123,7 @@ func PostImage(c *fiber.Ctx, imageHash string, parentThreadID string, file *mult
 	return nil
 }
 
-func PostOPImage(c *fiber.Ctx, imageHash string, file *multipart.FileHeader, ID string) error {
+func PostOPImage(c fiber.Ctx, imageHash string, file *multipart.FileHeader, ID string) error {
 
 	// Image is saved in the thread's folder based on its hash value.
 	if folderErr := os.Mkdir("public/threadContent/"+ID, os.ModePerm); folderErr != nil {
@@ -144,7 +144,7 @@ func PostOPImage(c *fiber.Ctx, imageHash string, file *multipart.FileHeader, ID 
 	return nil
 }
 
-func imageCheck(c *fiber.Ctx, file *multipart.FileHeader) (error, string) {
+func imageCheck(c fiber.Ctx, file *multipart.FileHeader) (error, string) {
 
 	if !checkImagePrivilege("test") {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{

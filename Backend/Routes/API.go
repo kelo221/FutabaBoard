@@ -2,7 +2,7 @@ package Routes
 
 import (
 	"backend/Controllers"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func Setup(app *fiber.App) {
@@ -12,8 +12,8 @@ func Setup(app *fiber.App) {
 	admin.Delete("remove/*", Controllers.DeletePost)
 	admin.Post("ban", Controllers.Ban)
 
-	api.Post("register", Controllers.Register)
-	api.Post("login", Controllers.Login)
+	//api.Post("register", Controllers.Register)
+	//api.Post("login", Controllers.Login)
 	api.Post("thread", Controllers.Thread)
 	api.Post("post", Controllers.Post)
 
@@ -21,6 +21,9 @@ func Setup(app *fiber.App) {
 	api.Get("pageCount", Controllers.FetchPageCount)
 	api.Get("page/*", Controllers.FetchThreadPreviews)
 	api.Get("post/*", Controllers.FetchPost)
-	api.Post("test", Controllers.TestFunction)
+	//api.Post("test", Controllers.TestFunction)
+
+	app.Get("/", Controllers.ReturnStatic)
+	app.Get("/thread/*", Controllers.ReturnPage)
 
 }

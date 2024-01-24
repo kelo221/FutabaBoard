@@ -3,19 +3,13 @@ package main
 import (
 	"backend/Database"
 	"backend/Routes"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func main() {
 
-	app := fiber.New(fiber.Config{
-		//	Prefork:       true,
-		CaseSensitive: true,
-		StrictRouting: true,
-		ServerHeader:  "Fiber",
-		AppName:       "Hesat Backend",
-	})
+	app := fiber.New()
 
 	if fiber.IsChild() == false {
 		Database.Init()
