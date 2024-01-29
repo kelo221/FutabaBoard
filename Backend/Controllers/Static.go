@@ -11,7 +11,7 @@ import (
 )
 
 func ReturnStatic(c fiber.Ctx) error {
-	return Render(&c, Blueprints.Thread(nil))
+	return Render(&c, Blueprints.Empty())
 }
 
 func ReturnPage(c fiber.Ctx) error {
@@ -53,7 +53,7 @@ func ReturnPage(c fiber.Ctx) error {
 				})
 			}
 
-			return Render(&c, Blueprints.Thread(colWithPosts))
+			return Render(&c, Blueprints.ShowAll(colWithPosts))
 		}
 	}
 }

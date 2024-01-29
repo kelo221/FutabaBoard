@@ -3,7 +3,7 @@ module backend
 go 1.21.6
 
 require (
-	github.com/a-h/templ v0.2.513
+	github.com/a-h/templ v0.2.543
 	github.com/disintegration/imaging v1.6.2
 	github.com/gofiber/fiber/v2 v2.52.0
 	github.com/gofiber/fiber/v3 v3.0.0-20240119134344-9a56a1bf6dbc
