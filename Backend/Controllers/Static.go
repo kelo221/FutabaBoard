@@ -11,7 +11,7 @@ import (
 )
 
 func ReturnStatic(c fiber.Ctx) error {
-	return Render(&c, Blueprints.Empty())
+	return c.SendString("Hello, World!")
 }
 
 func ReturnPage(c fiber.Ctx) error {

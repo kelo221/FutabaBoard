@@ -2,6 +2,7 @@ package Routes
 
 import (
 	"backend/Controllers"
+
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -24,6 +25,6 @@ func Setup(app *fiber.App) {
 	//api.Post("test", Controllers.TestFunction)
 
 	app.Get("/", Controllers.ReturnStatic)
-	app.Get("/thread/*", Controllers.ReturnPage)
+	app.Get("/page/*", Controllers.ReturnPage)
 
 }
